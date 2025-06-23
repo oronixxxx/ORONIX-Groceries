@@ -1,0 +1,850 @@
+[
+  {
+    "id":1,
+    "name":"apple",
+    "category":"Fruits",
+    "description":"Crisp, juicy, and naturally sweet \u2013 our apples are picked at the peak of perfection. Whether you're slicing them into a salad, baking them into a pie, or enjoying them on the go, they deliver crunch, flavor, and classic refreshment in every bite.",
+    "price":4.5,
+    "color":"Red"
+  },
+  {
+    "id":2,
+    "name":"avocado",
+    "category":"Fruits",
+    "description":"Smooth, creamy, and rich in nutrients \u2013 our avocados are the star of any toast, salad, or guacamole. With their buttery texture and subtle flavor, they\u2019re a wholesome and delicious way to elevate your meals.",
+    "price":5.5,
+    "color":"Green"
+  },
+  {
+    "id":3,
+    "name":"banana",
+    "category":"Fruits",
+    "description":"Bright yellow, naturally sweet, and always satisfying \u2013 our bananas are perfect for breakfast, smoothies, or as a healthy snack. Packed with energy and potassium, they\u2019re the go-to fruit for fuel and flavor.",
+    "price":7.5,
+    "color":"Yellow"
+  },
+  {
+    "id":4,
+    "name":"blueberry",
+    "category":"Fruits",
+    "description":"Tiny, vibrant, and bursting with antioxidants \u2013 our blueberries are the ultimate snack or topping. Add them to yogurt, oatmeal, or just enjoy by the handful for a fresh, fruity burst of goodness.",
+    "price":7.0,
+    "color":"Blue"
+  },
+  {
+    "id":5,
+    "name":"cherry",
+    "category":"Fruits",
+    "description":"Plump, juicy, and beautifully red \u2013 our cherries are a sweet summer delight. Enjoy them fresh, baked into desserts, or as a vibrant topping for breakfasts and treats \u2013 a taste that never gets old.",
+    "price":4.5,
+    "color":"Red"
+  },
+  {
+    "id":6,
+    "name":"grape",
+    "category":"Fruits",
+    "description":"Sweet, crisp, and refreshingly juicy \u2013 our grapes are snack-ready and always delicious. Perfect for fruit platters, lunchboxes, or a frozen treat, they\u2019re a simple pleasure you\u2019ll reach for again and again.",
+    "price":4.5,
+    "color":"Purple"
+  },
+  {
+    "id":7,
+    "name":"grapefruit",
+    "category":"Fruits",
+    "description":"Tart, tangy, and packed with citrus punch \u2013 our grapefruits are a bold choice for fresh juice, breakfast halves, or zesty salads. Refreshing and invigorating, they\u2019re citrus with attitude.",
+    "price":4.5,
+    "color":"Orange"
+  },
+  {
+    "id":8,
+    "name":"kiwi",
+    "category":"Fruits",
+    "description":"Fuzzy on the outside, vibrant and tangy inside \u2013 our kiwis are tropical gems. Slice them in half or scoop them out for a zesty snack full of vitamin C and natural goodness that brightens your day.",
+    "price":4.5,
+    "color":"Green"
+  },
+  {
+    "id":9,
+    "name":"lemon",
+    "category":"Fruits",
+    "description":"Tart, refreshing, and packed with personality \u2013 our limes are perfect for cocktails, marinades, or a citrusy twist on anything. Their bold flavor brings sparkle and freshness to every bite and sip.",
+    "price":6.0,
+    "color":"Yellow"
+  },
+  {
+    "id":10,
+    "name":"lime",
+    "category":"Fruits",
+    "description":"Juicy, sweet, and oh-so-refreshing \u2013 our melons are the ultimate summer indulgence. Slice them cold for a hydrating snack that feels like a treat and tastes like sunshine in every bite.",
+    "price":8.0,
+    "color":"Green"
+  },
+  {
+    "id":11,
+    "name":"melon",
+    "category":"Fruits",
+    "description":"Smooth-skinned and bursting with juicy sweetness \u2013 our nectarines are nature\u2019s candy. Delicious on their own, grilled, or in desserts, they bring a golden glow and fresh flavor to every season.",
+    "price":9.0,
+    "color":"Orange"
+  },
+  {
+    "id":12,
+    "name":"nectarine",
+    "category":"Fruits",
+    "description":"Bright, tangy, and packed with vitamin C \u2013 our oranges are the citrus classic you know and love. Peel, juice, or segment them for a fresh burst of sunshine whenever you need it.",
+    "price":4.5,
+    "color":"Orange"
+  },
+  {
+    "id":13,
+    "name":"orange",
+    "category":"Fruits",
+    "description":"Bright, tangy, and packed with vitamin C \u2013 our oranges are the citrus classic you know and love. Peel, juice, or segment them for a fresh burst of sunshine whenever you need it.",
+    "price":4.5,
+    "color":"Orange"
+  },
+  {
+    "id":14,
+    "name":"peach",
+    "category":"Fruits",
+    "description":"Soft, golden, and dripping with summer sweetness \u2013 our peaches are the definition of juicy indulgence. Perfect for eating fresh, baking into cobblers, or pairing with cream for a classic delight.",
+    "price":4.5,
+    "color":"Orange"
+  },
+  {
+    "id":15,
+    "name":"pear",
+    "category":"Fruits",
+    "description":"Mildly sweet, soft, and elegantly refreshing \u2013 our pears are perfect for snacking, slicing into salads, or baking into warm desserts. A gentle fruit with timeless charm.",
+    "price":7.5,
+    "color":"Green"
+  },
+  {
+    "id":16,
+    "name":"plum",
+    "category":"Fruits",
+    "description":"Deep purple, sweet-tart, and full of rich juice \u2013 our plums are perfect for fresh eating or baking. With a soft bite and bold flavor, they\u2019re a little luxury in every mouthful.",
+    "price":4.5,
+    "color":"Purple"
+  },
+  {
+    "id":17,
+    "name":"strawberry",
+    "category":"Fruits",
+    "description":"Bright red, naturally sweet, and bursting with aroma \u2013 our strawberries are a crowd favorite. Whether dipped in chocolate, blended in smoothies, or eaten fresh, they bring joy to every bite.",
+    "price":6.0,
+    "color":"Red"
+  },
+  {
+    "id":18,
+    "name":"watermelon",
+    "category":"Fruits",
+    "description":"Crisp, cool, and ultra-hydrating \u2013 our watermelons are summer in a slice. With their sweet pink flesh and refreshing crunch, they\u2019re perfect for picnics, parties, or solo snacking on sunny days.",
+    "price":4.5,
+    "color":"Green"
+  },
+  {
+    "id":19,
+    "name":"asparagus",
+    "category":"Vegetables",
+    "description":"Elegant, crisp, and full of earthy flavor \u2013 our asparagus spears are perfect for roasting, grilling, or tossing into salads. A gourmet Vegetables that\u2019s as nutritious as it is delicious, adding a touch of green sophistication to any meal.",
+    "price":15.0,
+    "color":"Green"
+  },
+  {
+    "id":20,
+    "name":"beet",
+    "category":"Vegetables",
+    "description":"Deep in color and naturally sweet \u2013 our beets are earthy gems, perfect for roasting, juicing, or grating into vibrant salads. Packed with antioxidants and flavor, they bring richness and nutrition to your plate.",
+    "price":7.5,
+    "color":"Purple"
+  },
+  {
+    "id":21,
+    "name":"brocolli",
+    "category":"Vegetables",
+    "description":"Crisp florets full of vitamins and crunch \u2013 our broccoli is a staple for stir-fries, steams, and sides. Whether lightly saut\u00e9ed or dipped raw, it\u2019s a flavorful, fiber-rich favorite for the whole family.",
+    "price":10.0,
+    "color":"Green"
+  },
+  {
+    "id":22,
+    "name":"cabbage",
+    "category":"Vegetables",
+    "description":"Layered, crunchy, and full of versatility \u2013 our cabbage is great for slaws, stir-fries, or hearty stews. With its mild flavor and satisfying texture, it\u2019s a reliable and wholesome addition to any dish.",
+    "price":5.0,
+    "color":"Green"
+  },
+  {
+    "id":23,
+    "name":"cauliflower",
+    "category":"Vegetables",
+    "description":"Creamy-white and tender, our cauliflower is a low-carb favorite with endless possibilities. Roast it, rice it, mash it \u2013 it adapts to your cooking creativity while offering subtle, satisfying flavor.",
+    "price":10.0,
+    "color":"White"
+  },
+  {
+    "id":24,
+    "name":"carrot",
+    "category":"Vegetables",
+    "description":"Vibrantly orange and naturally sweet \u2013 our carrots are crisp when raw and comforting when cooked. Perfect for juicing, roasting, or snacking, they\u2019re a nutritious classic with unbeatable crunch.",
+    "price":3.0,
+    "color":"Orange"
+  },
+  {
+    "id":25,
+    "name":"celery",
+    "category":"Vegetables",
+    "description":"Light, hydrating, and naturally crisp \u2013 our celery is a refreshing snack and a cooking essential. Dip it in hummus, add it to soups, or enjoy its subtle saltiness straight from the stalk.",
+    "price":8.5,
+    "color":"Green"
+  },
+  {
+    "id":26,
+    "name":"corn",
+    "category":"Vegetables",
+    "description":"Golden, sweet, and bursting with freshness \u2013 our corn is a sunny addition to any meal. Grill it on the cob, toss it in salads, or savor it straight from the pan \u2013 summer flavor all year long.",
+    "price":5.0,
+    "color":"Yellow"
+  },
+  {
+    "id":27,
+    "name":"cucumber",
+    "category":"Vegetables",
+    "description":"Cool, crisp, and refreshing \u2013 our cucumbers bring hydration and crunch to salads, snacks, and sides. Slice them thin or enjoy them whole \u2013 they\u2019re a crisp green classic that never fails.",
+    "price":2.0,
+    "color":"Green"
+  },
+  {
+    "id":28,
+    "name":"eggplant",
+    "category":"Vegetables",
+    "description":"Glossy and rich in texture \u2013 our eggplants are perfect for grilling, roasting, or layering into casseroles. Their Meatsy bite and deep flavor make them a favorite for both vegetarians and Meats-lovers alike.",
+    "price":6.0,
+    "color":"Purple"
+  },
+  {
+    "id":29,
+    "name":"garlic",
+    "category":"Vegetables",
+    "description":"Bold, aromatic, and full of flavor \u2013 our garlic cloves are a kitchen essential. Whether minced into sauces, roasted whole, or saut\u00e9ed into stir-fries, they bring depth and richness to every savory creation.",
+    "price":8.0,
+    "color":"White"
+  },
+  {
+    "id":30,
+    "name":"green onion",
+    "category":"Vegetables",
+    "description":"Fresh, crisp, and mild \u2013 our green onions add a burst of color and flavor to salads, stir-fries, and toppings. A perfect garnish or ingredient that brings freshness to every bite.",
+    "price":3.0,
+    "color":"Green"
+  },
+  {
+    "id":31,
+    "name":"lettuce",
+    "category":"Vegetables",
+    "description":"Crisp, cool, and refreshingly light \u2013 our lettuce is the base of any great salad or sandwich. With its satisfying crunch and garden-fresh quality, it brings life and texture to every plate.",
+    "price":5.5,
+    "color":"Green"
+  },
+  {
+    "id":32,
+    "name":"onion",
+    "category":"Vegetables",
+    "description":"Savory and sweet when cooked, sharp and crisp when raw \u2013 our onions are a flavor foundation in countless dishes. Dice, slice, or caramelize for irresistible depth in every meal.",
+    "price":2.5,
+    "color":"Yellow"
+  },
+  {
+    "id":33,
+    "name":"pepper",
+    "category":"Vegetables",
+    "description":"Bright, sweet, and crunchy \u2013 our peppers bring color and freshness to your kitchen. Whether roasted, stuffed, or raw in a salad, they add a juicy pop of flavor to any dish.",
+    "price":4.0,
+    "color":"Red"
+  },
+  {
+    "id":34,
+    "name":"potato",
+    "category":"Vegetables",
+    "description":"Hearty, comforting, and incredibly versatile \u2013 our potatoes are perfect for roasting, mashing, or frying. A Pantry Items staple that\u2019s satisfying, filling, and loved in every form.",
+    "price":3.0,
+    "color":"Brown"
+  },
+  {
+    "id":35,
+    "name":"spinach",
+    "category":"Vegetables",
+    "description":"Leafy, tender, and nutrient-rich \u2013 our spinach is a powerhouse of vitamins. Perfect for salads, omelets, or saut\u00e9ing into warm dishes, it adds both health and flavor to your meals.",
+    "price":15.0,
+    "color":"Green"
+  },
+  {
+    "id":36,
+    "name":"sweet potato",
+    "category":"Vegetables",
+    "description":"Naturally sweet and richly satisfying \u2013 our sweet potatoes are ideal for roasting, mashing, or turning into fries. A wholesome and delicious twist on a classic favorite.",
+    "price":7.5,
+    "color":"Orange"
+  },
+  {
+    "id":37,
+    "name":"tomato",
+    "category":"Vegetables",
+    "description":"Juicy, vibrant, and full of garden-fresh flavor \u2013 our tomatoes are perfect for slicing, cooking, or blending into sauces. A staple ingredient that adds brightness and depth to any recipe.",
+    "price":2.0,
+    "color":"Red"
+  },
+  {
+    "id":38,
+    "name":"zuchini",
+    "category":"Vegetables",
+    "description":"Mild, tender, and endlessly versatile \u2013 our zucchini is perfect for grilling, saut\u00e9ing, or baking. Light in texture but big in possibilities, it\u2019s a favorite for healthy, flavorful meals.",
+    "price":10.0,
+    "color":"Green"
+  },
+  {
+    "id":39,
+    "name":"butter",
+    "category":"Dairy",
+    "description":"Rich, creamy, and full of flavor \u2013 our butter spreads beautifully and melts to perfection. Whether you\u2019re baking, saut\u00e9ing, or adding a pat to warm Breads, it delivers that classic homemade taste in every bite.",
+    "price":5.0,
+    "color":"Yellow"
+  },
+  {
+    "id":40,
+    "name":"cheese",
+    "category":"Dairy",
+    "description":"Smooth, savory, and full-bodied \u2013 our cheese is a delicious addition to sandwiches, pasta, or snack trays. Whether sliced, shredded, or melted, it\u2019s a satisfying staple in any kitchen and loved by all ages.",
+    "price":10.0,
+    "color":"Yellow"
+  },
+  {
+    "id":41,
+    "name":"egg ",
+    "category":"Dairy",
+    "description":"Fresh, versatile, and packed with protein \u2013 our eggs are essential for every meal. Scramble, boil, fry, or bake them into your favorite recipes \u2013 they\u2019re the reliable kitchen hero you can always count on.",
+    "price":15.0,
+    "color":"White"
+  },
+  {
+    "id":42,
+    "name":"milk",
+    "category":"Dairy",
+    "description":"Pure, creamy, and refreshingly smooth \u2013 our milk is perfect for Drinksing, cooking, or pairing with your morning cereal. Packed with calcium and freshness, it\u2019s a daily staple for the whole family.",
+    "price":6.0,
+    "color":"White"
+  },
+  {
+    "id":43,
+    "name":"yogurt",
+    "category":"Dairy",
+    "description":"Cool, creamy, and probiotic-rich \u2013 our yogurt is perfect for breakfasts, snacks, or smoothies.",
+    "price":3.5,
+    "color":"White"
+  },
+  {
+    "id":44,
+    "name":"Bread",
+    "category":"Breads",
+    "description":"Soft and hearty, our Breads is the perfect base for your favorite sandwich or toast. Freshly baked\nand full of that homey aroma, every slice is pure comfort.",
+    "price":8.0,
+    "color":"Brown"
+  },
+  {
+    "id":45,
+    "name":"bagel",
+    "category":"Breads",
+    "description":"Golden and chewy, our bagels are a breakfast essential. Toast them, top them, or eat them plain \u2013\nthey\u2019re satisfying any time of day.",
+    "price":3.5,
+    "color":"Brown"
+  },
+  {
+    "id":46,
+    "name":"croissant",
+    "category":"Breads",
+    "description":"Buttery and flaky, our croissants bring Parisian elegance to your plate. Perfect for breakfast or a\nfancy snack.",
+    "price":2.0,
+    "color":"Yellow"
+  },
+  {
+    "id":47,
+    "name":"cookie",
+    "category":"Breads",
+    "description":"Crispy on the edges, soft in the center \u2013 our cookies are baked to perfection and impossible to\nresist.",
+    "price":2.0,
+    "color":"Brown"
+  },
+  {
+    "id":48,
+    "name":"doughnut",
+    "category":"Breads",
+    "description":"Glazed and golden, our doughnuts are sweet circles of joy. Whether filled or frosted, they bring\nsmiles every time.",
+    "price":2.0,
+    "color":"Yellow"
+  },
+  {
+    "id":49,
+    "name":"muffin",
+    "category":"Breads",
+    "description":"Moist, fluffy, and bursting with flavor \u2013 our muffins are baked to golden perfection. Whether it\u2019s blueberry, chocolate chip, or classic vanilla, each bite delivers cozy sweetness and a soft texture that\u2019s perfect for breakfast or snacking anytime.",
+    "price":2.0,
+    "color":"Brown"
+  },
+  {
+    "id":50,
+    "name":"tortilla",
+    "category":"Breads",
+    "description":"Soft, flexible, and always fresh \u2013 our tortillas are ready to wrap your favorite flavors. Whether for tacos, burritos, or a simple sandwich roll, they bring authentic taste and versatility to every kitchen.",
+    "price":10.0,
+    "color":"Yellow"
+  },
+  {
+    "id":51,
+    "name":"hot dog",
+    "category":"Meats",
+    "description":"Juicy, flavorful, and ready for the grill \u2013 our hot dogs are a family favorite. Serve them in a bun with your favorite toppings or slice them into dishes for that comforting, classic flavor everyone loves.",
+    "price":25.0,
+    "color":"Pink"
+  },
+  {
+    "id":52,
+    "name":"steak",
+    "category":"Meats",
+    "description":"Rich, tender, and packed with bold flavor \u2013 our steak is a gourmet experience made easy. Whether grilled, pan-seared, or broiled, it\u2019s the centerpiece that turns any dinner into something special.",
+    "price":120.0,
+    "color":"Red"
+  },
+  {
+    "id":53,
+    "name":"chicken",
+    "category":"Meats",
+    "description":"Lean, versatile, and full of natural flavor \u2013 our chicken is perfect for every cuisine. Roast, grill, saut\u00e9, or shred it into your favorite dish \u2013 it\u2019s a high-protein staple with endless possibilities.",
+    "price":30.0,
+    "color":"Pink"
+  },
+  {
+    "id":54,
+    "name":"lamb",
+    "category":"Meats",
+    "description":"Juicy, tender, and rich in flavor \u2013 our lamb offers a bold twist on traditional dinners. Ideal for roasting or grilling, it\u2019s a premium cut that adds depth and elegance to any meal.",
+    "price":100.0,
+    "color":"Red"
+  },
+  {
+    "id":55,
+    "name":"baked bean",
+    "category":"Pantry Items",
+    "description":"Comforting, hearty, and full of flavor \u2013 our baked beans are slow-cooked in a savory-sweet sauce. Serve them as a side or enjoy them as a meal \u2013 they\u2019re satisfying, simple, and delicious.",
+    "price":4.0,
+    "color":"Brown"
+  },
+  {
+    "id":56,
+    "name":"pickle",
+    "category":"Pantry Items",
+    "description":"Crisp, tangy, and bursting with briny goodness \u2013 our pickles are a classic snack or sandwich companion. Add crunch and flavor to burgers, boards, or just enjoy them straight from the jar.",
+    "price":10.0,
+    "color":"Green"
+  },
+  {
+    "id":57,
+    "name":"peanut butter",
+    "category":"Pantry Items",
+    "description":"Creamy, rich, and irresistibly nutty \u2013 our peanut butter is a Pantry essential. Whether spread on toast, blended into smoothies, or enjoyed by the spoonful, it delivers comfort and protein in every bite. A delicious classic that never goes out of style.",
+    "price":6.0,
+    "color":"Brown"
+  },
+  {
+    "id":58,
+    "name":"jam",
+    "category":"Pantry Items",
+    "description":"Sweet, fruity, and full of real fruit flavor \u2013 our jam is the perfect partner to toast, pastries, and desserts. With its smooth texture and vibrant taste, it turns any meal into a cozy, homemade moment of joy.",
+    "price":5.5,
+    "color":"Colorful"
+  },
+  {
+    "id":59,
+    "name":"cereal",
+    "category":"Pantry Items",
+    "description":"Crispy, golden, and delicious \u2013 our cereal is the ultimate breakfast staple. Whether you enjoy it with cold milk or as a dry snack, it\u2019s packed with energy and flavor to fuel your day from the first spoonful.",
+    "price":10.5,
+    "color":"Yellow"
+  },
+  {
+    "id":60,
+    "name":"apple sauce ",
+    "category":"Pantry Items",
+    "description":"Smooth, naturally sweet, and made from real apples \u2013 our applesauce is a wholesome treat for kids and adults. Serve it chilled, warm, or as a side dish \u2013 it\u2019s comfort food with a fruity twist.",
+    "price":4.0,
+    "color":"Yellow"
+  },
+  {
+    "id":61,
+    "name":"granola",
+    "category":"Pantry Items",
+    "description":"Crunchy, hearty, and slightly sweet \u2013 our granola is a delicious mix of oats, nuts, and goodness. Perfect over yogurt, with milk, or by the handful, it\u2019s a snack that\u2019s as satisfying as it is nutritious.",
+    "price":8.5,
+    "color":"Brown"
+  },
+  {
+    "id":62,
+    "name":"pasta",
+    "category":"Pantry Items",
+    "description":"Made from high-quality wheat and crafted to perfection \u2013 our pasta cooks up to the ideal texture every time. Whether paired with a rich sauce or tossed in a simple olive oil blend, it\u2019s the base of countless satisfying meals.",
+    "price":3.0,
+    "color":"Yellow"
+  },
+  {
+    "id":63,
+    "name":"rice",
+    "category":"Pantry Items",
+    "description":"Fluffy, light, and perfectly versatile \u2013 our rice is a go-to for countless cuisines. From stir-fries to pilafs, it\u2019s the comfort food base that brings dishes together with simplicity and warmth.",
+    "price":10.0,
+    "color":"White"
+  },
+  {
+    "id":64,
+    "name":"honey",
+    "category":"Pantry Items",
+    "description":"Golden, sweet, and naturally pure \u2013 our honey is perfect for drizzling, baking, or stirring into your favorite tea. Straight from nature, it adds a rich touch of sweetness to every meal or snack.",
+    "price":15.0,
+    "color":"Yellow"
+  },
+  {
+    "id":65,
+    "name":"hot sauce",
+    "category":"Pantry Items",
+    "description":"Spicy, bold, and full of flavor \u2013 our hot sauce brings heat and depth to every bite. Whether you\u2019re spicing up tacos, eggs, or your favorite dish, just a dash adds serious kick and excitement.",
+    "price":13.0,
+    "color":"Red"
+  },
+  {
+    "id":66,
+    "name":"olive oil",
+    "category":"Pantry Items",
+    "description":"Smooth, aromatic, and cold-pressed for quality \u2013 our olive oil is the cornerstone of delicious cooking. Ideal for salads, saut\u00e9ing, or dipping fresh Breads, it brings richness and authenticity to every kitchen.",
+    "price":50.0,
+    "color":"Green"
+  },
+  {
+    "id":67,
+    "name":"candy",
+    "category":"Snacks",
+    "description":"Treat yourself to a burst of sweetness with our colorful candy selection. Each piece is crafted to deliver joy in every bite \u2013 perfect for sharing, snacking, or sneaking into your desk drawer. A delicious escape that brings smiles to kids and grown-ups alike.",
+    "price":3.0,
+    "color":"Colorful"
+  },
+  {
+    "id":68,
+    "name":"cracker",
+    "category":"Snacks",
+    "description":"Light, crispy, and golden-baked \u2013 our crackers are a satisfying snack on their own or a perfect pairing with cheese and spreads. Whether at a picnic, in your lunchbox, or with a glass of wine, they\u2019re a crunchy companion you\u2019ll crave again and again.",
+    "price":16.0,
+    "color":"Brown"
+  },
+  {
+    "id":69,
+    "name":"granola bar",
+    "category":"Snacks",
+    "description":"Packed with oats, nuts, and natural sweetness, our granola bars fuel your busy day with delicious convenience. Great for breakfast on the go, a midday boost, or a healthy snack, they combine flavor, fiber, and satisfaction in every bite.",
+    "price":3.0,
+    "color":"Brown"
+  },
+  {
+    "id":70,
+    "name":"potato chip",
+    "category":"Snacks",
+    "description":"Crispy, salty, and impossible to resist \u2013 our potato chips deliver that classic crunch with every bite. Made from quality potatoes and cooked to golden perfection, they\u2019re your go-to snack for movies, parties, or whenever cravings hit.",
+    "price":5.0,
+    "color":"Yellow"
+  },
+  {
+    "id":71,
+    "name":"beer",
+    "category":"Drinks",
+    "description":"Cold, crisp, and perfectly balanced \u2013 our beer brings refreshing satisfaction to any occasion. Whether you\u2019re relaxing after work or toasting with friends, every sip delivers flavor, smoothness, and great times ahead.",
+    "price":10.0,
+    "color":"Brown"
+  },
+  {
+    "id":72,
+    "name":"soda",
+    "category":"Drinks",
+    "description":"Bubbly, sweet, and bursting with flavor \u2013 our soda is the ultimate fizzy treat. Serve it cold for a refreshing lift during meals, breaks, or celebrations. One sip and you're refreshed, recharged, and ready for more.",
+    "price":5.0,
+    "color":"Colorful"
+  },
+  {
+    "id":73,
+    "name":"coffee",
+    "category":"Drinks",
+    "description":"Bold, aromatic, and full of character \u2013 our coffee fuels your day from the very first sip. Whether brewed strong or sipped slowly, it delivers the rich depth and comforting warmth every coffee lover deserves. Start your morning right.",
+    "price":8.0,
+    "color":"Brown"
+  },
+  {
+    "id":74,
+    "name":"energy Drink",
+    "category":"Drinks",
+    "description":"Power through your day with our energizing Drink \u2013 a bold blend of flavor and function. Packed with caffeine and essential B vitamins, it helps you stay sharp, focused, and on top of your game when you need that extra push.",
+    "price":8.0,
+    "color":"Colorful"
+  },
+  {
+    "id":75,
+    "name":"juice box",
+    "category":"Drinks",
+    "description":"Bursting with fruity goodness, our juice boxes are the perfect refreshment for kids and adults alike. Packed with vitamins and delicious flavor, they\u2019re great for lunchboxes, picnics, or a quick, thirst-quenching treat on the go.",
+    "price":3.0,
+    "color":"Colorful"
+  },
+  {
+    "id":76,
+    "name":"wine",
+    "category":"Drinks",
+    "description":"Smooth, elegant, and full of character \u2013 our wine is crafted to complement life\u2019s best moments. Whether paired with a meal or savored on its own, it brings warmth, richness, and refinement to every glass.",
+    "price":60.0,
+    "color":"Colorful"
+  },
+  {
+    "id":77,
+    "name":"bleach",
+    "category":"Household and cleaning",
+    "description":"Powerful and effective, our bleach tackles the toughest stains and disinfects every surface with confidence. Whether you're brightening laundry or deep-cleaning your home, its reliable formula ensures sparkling results and hygienic spaces \u2013 a must-have for any cleaning routine.",
+    "price":13.0,
+    "color":"White"
+  },
+  {
+    "id":78,
+    "name":"dish soap",
+    "category":"Household and cleaning",
+    "description":"Cut through grease with ease using our high-performance dish soap. Gentle on your hands yet tough on grime, it leaves every dish spotless and sparkling. Infused with a fresh scent, it makes dishwashing quicker, cleaner, and more enjoyable.",
+    "price":7.0,
+    "color":"Colorful"
+  },
+  {
+    "id":79,
+    "name":"fabric softener",
+    "category":"Household and cleaning",
+    "description":"Wrap your clothes in long-lasting softness and a fresh, clean scent with our fabric softener. It reduces static, restores flexibility, and leaves fabrics feeling smooth and luxurious \u2013 laundry day has never felt so rewarding.",
+    "price":14.5,
+    "color":"Colorful"
+  },
+  {
+    "id":80,
+    "name":"paper towel",
+    "category":"Household and cleaning",
+    "description":"Quickly absorb life\u2019s little messes with our durable paper towels. Whether it\u2019s spills, splashes, or cleaning on the go, they offer strength and reliability in every sheet. Keep your space clean with a roll that\u2019s always up to the task.",
+    "price":10.0,
+    "color":"White"
+  },
+  {
+    "id":81,
+    "name":"laundry detergent",
+    "category":"Household and cleaning",
+    "description":"Lift tough stains and brighten your wardrobe with our advanced laundry detergent. Designed to work in all machines and water temperatures, it keeps your clothes fresh, clean, and vibrant with every wash. Gentle on fabrics, strong on dirt.",
+    "price":16.5,
+    "color":"Colorful"
+  },
+  {
+    "id":82,
+    "name":"toilet paper",
+    "category":"Household and cleaning",
+    "description":"Experience ultimate comfort with our ultra-soft toilet paper. Strong, absorbent, and gentle on skin, it\u2019s designed for everyday care and confidence. Stock up on a bathroom essential that combines quality with comfort.",
+    "price":14.0,
+    "color":"White"
+  },
+  {
+    "id":83,
+    "name":"sponge",
+    "category":"Household and cleaning",
+    "description":"Scrub smarter with our highly absorbent and durable sponge. Ideal for dishes, counters, and more \u2013 it cleans thoroughly without scratching. A kitchen classic designed to tackle messes with ease and comfort.",
+    "price":6.0,
+    "color":"Colorful"
+  },
+  {
+    "id":84,
+    "name":"surface spray",
+    "category":"Household and cleaning",
+    "description":"Shine and sanitize every surface in your home with our multipurpose surface spray. Its powerful formula removes grease, grime, and germs while leaving behind a light, fresh scent. A clean home is just one spray away.",
+    "price":12.0,
+    "color":"Colorful"
+  },
+  {
+    "id":85,
+    "name":"body lotion",
+    "category":"Personal care",
+    "description":"Pamper your skin with our nourishing body lotion. Infused with hydrating ingredients and a light scent, it leaves your skin feeling soft, smooth, and refreshed all day long. Perfect for daily use \u2013 because your skin deserves extra love.",
+    "price":20.0,
+    "color":"White"
+  },
+  {
+    "id":86,
+    "name":"shaving cream",
+    "category":"Personal care",
+    "description":"Enjoy a smooth, comfortable shave every time with our rich shaving cream. It cushions the blade, reduces irritation, and hydrates your skin while you shave. For results that are clean, close, and confidently smooth.",
+    "price":10.0,
+    "color":"White"
+  },
+  {
+    "id":87,
+    "name":"sunscreen",
+    "category":"Personal care",
+    "description":"Protect your skin from harmful UV rays with our lightweight, fast-absorbing sunscreen. Formulated with broad-spectrum coverage, it blends seamlessly without leaving residue, keeping your skin safe, smooth, and hydrated. Perfect for daily use, whether you're at the beach or just on the go \u2013 sun care that feels as good as it protects.",
+    "price":15.5,
+    "color":"White"
+  },
+  {
+    "id":88,
+    "name":"conditioner",
+    "category":"Personal care",
+    "description":"Nourish and revive your hair with our rich, moisture-locking conditioner. Designed to smooth, soften, and strengthen, it leaves hair feeling silky without weighing it down. Whether you have curls, waves, or straight strands \u2013 this conditioner is your go-to for shine and softness that lasts all day.",
+    "price":13.5,
+    "color":"Colorful"
+  },
+  {
+    "id":89,
+    "name":"shampoo",
+    "category":"Personal care",
+    "description":"Refresh your scalp and restore your shine with our revitalizing shampoo. Packed with gentle cleansers and nourishing ingredients, it removes buildup while hydrating your hair from root to tip. Lather, rinse, and enjoy the clean, healthy bounce your hair deserves every single wash.",
+    "price":13.5,
+    "color":"Colorful"
+  },
+  {
+    "id":90,
+    "name":"cotton swabs",
+    "category":"Personal care",
+    "description":"Soft, safe, and versatile \u2013 our cotton swabs are perfect for precise care, from beauty routines to gentle baby cleanups. Made with tightly spun cotton tips and sturdy sticks, they offer comfort and control in every use. A must-have in every bathroom cabinet.",
+    "price":6.0,
+    "color":"White"
+  },
+  {
+    "id":91,
+    "name":"dental floss",
+    "category":"Personal care",
+    "description":"Glide your way to a healthier smile with our gentle yet strong dental floss. Designed to slide easily between teeth and remove plaque without fraying, it keeps your mouth fresh and your gums protected. A small daily habit that delivers big oral care results.",
+    "price":5.0,
+    "color":"White"
+  },
+  {
+    "id":92,
+    "name":"deodorant",
+    "category":"Personal care",
+    "description":"Stay confidently fresh all day with our clean-scented deodorant. Its long-lasting formula fights odor and moisture without irritation, leaving you dry, comfortable, and ready to take on anything. Glide it on in the morning and forget about it \u2013 we\u2019ve got you covered.",
+    "price":10.0,
+    "color":"Colorful"
+  },
+  {
+    "id":93,
+    "name":"tissue",
+    "category":"Personal care",
+    "description":"Soft, absorbent, and always comforting \u2013 our tissues are gentle on skin but tough on sneezes, smudges, or spills. Whether at home, in your bag, or on your desk, they\u2019re the reliable choice for life\u2019s everyday moments.",
+    "price":8.0,
+    "color":"White"
+  },
+  {
+    "id":94,
+    "name":"mouth wash",
+    "category":"Personal care",
+    "description":"Give your breath a fresh start with our energizing mouthwash. It reaches where brushing can\u2019t, fighting bacteria and leaving your mouth clean, minty, and confident. Use it daily as the perfect final step in your oral care routine.",
+    "price":20.5,
+    "color":"Colorful"
+  },
+  {
+    "id":95,
+    "name":"razor",
+    "category":"Personal care",
+    "description":"Get a close, smooth shave with our ergonomically designed razor. Built with precision blades and a comfortable grip, it glides effortlessly across the skin, reducing nicks and irritation. For results that feel as good as they look, every single time.",
+    "price":10.0,
+    "color":"Colorful"
+  },
+  {
+    "id":96,
+    "name":"toothpaste",
+    "category":"Personal care",
+    "description":"Whiten, protect, and refresh with every brush using our advanced toothpaste. Infused with minty flavor and cavity-fighting ingredients, it strengthens enamel and keeps your smile bright. Make it the first and last thing you use every day.",
+    "price":5.0,
+    "color":"White"
+  },
+  {
+    "id":97,
+    "name":"toothbrush",
+    "category":"Personal care",
+    "description":"Our toothbrush delivers a powerful clean with soft bristles and a comfortable grip. It\u2019s designed to reach every corner, remove plaque gently, and keep gums healthy. Start and end your day with a toothbrush that works as hard as you do.",
+    "price":7.5,
+    "color":"Colorful"
+  },
+  {
+    "id":98,
+    "name":"cat food",
+    "category":"Pet care",
+    "description":"Give your cat a bowl full of happiness with our nutritious and flavorful cat food. Specially crafted with high-quality ingredients, it supports healthy digestion, a shiny coat, and plenty of playful energy. Whether you have a curious kitten or a wise senior, every bite delivers taste and health in perfect balance \u2013 because your feline deserves the very best.",
+    "price":40.0,
+    "color":"Brown"
+  },
+  {
+    "id":99,
+    "name":"dog food",
+    "category":"Pet care",
+    "description":"Fuel your dog\u2019s day with our balanced and delicious dog food \u2013 a blend of essential nutrients and hearty flavor that keeps tails wagging. Formulated for overall wellness, it supports strong muscles, healthy skin, and boundless energy. From mealtime to playtime, give your furry friend food that\u2019s both satisfying and supportive.",
+    "price":60.0,
+    "color":"Brown"
+  },
+  {
+    "id":100,
+    "name":"dog treat",
+    "category":"Pet care",
+    "description":"Treat your pup to a snack they\u2019ll love and you\u2019ll feel great about \u2013 our dog treats are tasty, nutritious, and perfect for training or rewarding good behavior. Made with real ingredients and irresistible flavor, they\u2019re tail-wagging good and crafted to show your best friend how much you care, one bite at a time.",
+    "price":30.5,
+    "color":"Brown"
+  },
+  {
+    "id":101,
+    "name":"pet shampoo",
+    "category":"Pet care",
+    "description":"Keep your furry companion clean and fresh with our gentle pet shampoo. Specially formulated to cleanse without stripping natural oils, it leaves their coat soft, shiny, and smelling great. Suitable for dogs and cats alike, it\u2019s the perfect addition to bath time \u2013 for a pet that looks, feels, and smells amazing.",
+    "price":15.5,
+    "color":"Colorful"
+  },
+  {
+    "id":102,
+    "name":"baby food",
+    "category":" Baby care",
+    "description":"Packed with gentle nutrients and a naturally smooth texture, our baby food is made for your little one\u2019s first bites. Every spoonful is full of wholesome ingredients that support healthy growth and development. Whether at home or on the go, it\u2019s a delicious and nourishing way to introduce your baby to real food, with flavors they'll love and quality you can trust.",
+    "price":35.5,
+    "color":"Colorful"
+  },
+  {
+    "id":103,
+    "name":"baby wipe",
+    "category":" Baby care",
+    "description":"Soft, strong, and perfectly gentle \u2013 our baby wipes are made for delicate skin and daily messes. Infused with soothing moisture and dermatologically tested, they clean thoroughly without irritation. Whether during diaper changes, mealtime cleanups, or playtime accidents, these wipes are a parent\u2019s essential tool for clean, happy babies on the move.",
+    "price":10.0,
+    "color":"Colorful"
+  },
+  {
+    "id":104,
+    "name":"diaper",
+    "category":" Baby care",
+    "description":"Our diapers are designed with your baby\u2019s comfort in mind \u2013 ultra-soft, super absorbent, and made to keep delicate skin dry and happy all day and night. With a secure yet gentle fit, they allow for freedom of movement while preventing leaks and irritation. Whether it's playtime or bedtime, these diapers offer reliable protection you can trust with every change.",
+    "price":60.0,
+    "color":"White"
+  },
+  {
+    "id":105,
+    "name":"diaper cream",
+    "category":" Baby care",
+    "description":"Our diaper cream offers gentle, effective protection for your baby\u2019s most delicate skin. Enriched with soothing natural ingredients, it creates a breathable barrier that shields against moisture, redness, and irritation. Whether used daily or as needed, this cream brings comfort and calm to both babies and parents. Trusted by caregivers, it\u2019s a nursery essential you\u2019ll reach for with confidence.",
+    "price":30.0,
+    "color":"White"
+  },
+  {
+    "id":106,
+    "name":"baby formula",
+    "category":" Baby care",
+    "description":"Our baby formula is carefully crafted to support your little one's growth, development, and happiness from day one. Enriched with essential vitamins, minerals, and gentle proteins, it mimics the natural goodness of breast milk while ensuring balanced nutrition in every bottle. Trusted by parents and loved by babies, this formula provides peace of mind with every nourishing sip.",
+    "price":45.5,
+    "color":"Yellow"
+  }
+]

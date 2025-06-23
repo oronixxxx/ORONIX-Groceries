@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+    <title>ORONIX Admin - Items Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/flowbite@1.6.5/dist/flowbite.js"></script>
+  </head>
+  <body class="bg-[#f7fdff] min-h-screen flex flex-col">
+    <!-- Navigation Bar -->
+    <nav class="w-full bg-white px-6 py-4 shadow-md">
+      <div class="flex justify-start">
+        <a href="index.html" class="flex items-center space-x-2">
+          <img src="images/logo.png" alt="Logo" class="w-[160px] h-auto object-contain">
+        </a>
+      </div>
+    </nav>
+
+    <main class="flex-grow container max-w-7xl mx-auto px-6 pb-4 flex flex-col">
+      <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center h-full max-h-[calc(100vh-225px)] overflow-hidden mt-7">
+        <div class="container mx-auto items-center mb-5 border-b">
+          <h1 class="text-3xl font-bold text-gray-800 mb-8">Manage Items</h1>
+        </div>
+
+        <!-- Add Item Button -->
+        <div class="w-full flex justify-end mb-4 mr-3">
+          <button id="toggle-add-form" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-200 w-40">Add</button>
+        </div>
+
+        <!-- Add Item Form -->
+        <form id="add-item-form" class="hidden mb-10 p-6 bg-white shadow rounded grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" name="name" placeholder="Item Name" required class="border p-2 rounded" />
+            <input type="number" name="price" step="0.01" placeholder="Price" required class="border p-2 rounded" />
+
+            <select name="category" id="category-select" required class="border p-2 rounded">
+                <!-- Filled by JS -->
+            </select>
+
+            <select name="color" id="color-select" required class="border p-2 rounded">
+                <!-- Filled by JS -->
+            </select>
+
+            <input type="text" name="image" placeholder="Image filename (without .png)" required class="border p-2 rounded col-span-full" />
+            <textarea name="description" placeholder="Description" rows="3" class="border p-2 rounded col-span-full"></textarea>
+
+            <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-200 col-span-full">
+                Save Item
+            </button>
+        </form>
+
+        <!-- Items Table -->
+        <div class="w-full flex flex-col gap-4 mb-4 overflow-y-auto pr-2" style="max-height: 100%;">
+          <table class="min-w-full bg-white border border-blue-300 rounded-lg shadow">
+            <thead class="bg-blue-100">
+              <tr>
+                <th class="text-left px-4 py-2 border border-blue-300">Image</th>
+                <th class="text-left px-4 py-2 border border-blue-300">Name</th>
+                <th class="text-left px-4 py-2 border border-blue-300">Price</th>
+                <th class="text-left px-4 py-2 border border-blue-300">Category</th>
+                <th class="text-left px-4 py-2 border border-blue-300">Color</th>
+                <th class="text-left px-4 py-2 border border-blue-300">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="item-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-blue-400 bg-opacity-20 text-center text-gray-600 text-sm font-semibold border-t w-full h-10 p-3">
+      &copy; 2025 Oronix Groceries. All rights reserved.
+    </footer>
+
+    <script type="module" src="js/admin.js"></script>
+  </body>
+</html>

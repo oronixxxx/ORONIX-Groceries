@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="images/favicon.png">
+        <title>ORONIX Groceries - CHECKOUT</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/flowbite@1.6.5/dist/flowbite.js"></script>
+    </head>
+    <body class="bg-[#f7fdff] overflow-hidden min-h-screen flex flex-col">
+        <!-- Navigation Bar -->
+        <nav class="w-full bg-white px-6 py-4 shadow-md">
+            <div class="container mx-auto grid grid-cols-3 items-center">
+
+                <!-- Logo -->
+                <div class="flex justify-start">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <img src="images/logo.png" alt="Logo" class="w-[160px] h-auto object-contain">
+                    </a>
+                </div>
+
+                <!-- Menu Items -->
+                <div class="flex justify-center">
+                    <ul class="flex space-x-10 text-xl font-semibold">
+                        <li>
+                            <a href="index.html" class="pb-1 border-b-2 border-gray-900 text-gray-900 hover:text-blue-200 hover:border-blue-200">Home</a>
+                        </li>
+                        <li>
+                            <a href="products.html" class="pb-1 border-b-2 border-gray-900 text-gray-900 hover:text-blue-200 hover:border-blue-200">Products</a>
+                        </li>
+                        <li>
+                            <a href="about.html" class="pb-1 border-b-2 border-gray-900 text-gray-900 hover:text-blue-200 hover:border-blue-200">About</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Cart Icon -->
+                <div class="flex justify-end">
+                    <button aria-label="Cart" onclick="location.href='cart.html'">
+                        <svg class="w-7 h-7 text-gray-900 hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 2l1 6h10l1-6M4 8h16l-1.5 14H5.5L4 8z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="flex-grow container mx-auto px-6 pb-4 flex flex-col max-w-7xl">
+            <div class="bg-white rounded-xl shadow-lg flex flex-col items-center text-center mt-7">
+                <div class="container mx-auto grid grid-cols-2 items-start mb-5 p-5 gap-14"> 
+                    <!-- Order summary -->
+                    <section class="bg-white p-6 rounded-lg shadow-md h-[680px] flex flex-col justify-between">
+                        <h2 class="text-2xl font-bold mb-4">Order Summary</h2>
+                        <div id="order-summary" class="flex-1 overflow-y-auto pr-2"></div>
+                        <div id="total-price" class="mt-4 text-xl font-semibold text-blue-600"></div>
+                    </section>
+
+                    <!-- Checkout form -->
+                    <section class="bg-white p-6 rounded-lg shadow-md">    
+                        <h2 class="text-2xl font-bold mb-4">
+                            Shipping Details
+                        </h2>
+
+                        <form id="checkout-form" class="flex flex-col gap-4">
+                            <!-- Input fields for shipping details -->
+                            <input type="text" name="fullName" placeholder="Full Nmae" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            <input type="email" name="email" placeholder="Email Address" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            <input type="text" name="phone" placeholder="Phone Number" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            <input type="text" name="address" placeholder="Address" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            <input type="text" name="city" placeholder="City" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            <input type="text" name="state" placeholder="State" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            <input type="text" name="zip" placeholder="Zip Code" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            
+                            <!-- Submit button -->
+                            <button type="submit" class="bg-blue-600 text-white rounded-lg p-2 hover:bg-blue-600 transition duration-200">
+                                Place Order
+                            </button>
+                        </form>
+                    </section>                    
+                </div>
+            </div>
+            
+        </main>
+        
+        <!-- Footer -->
+        <footer class="bg-blue-400 bg-opacity-20 items-center text-center text-gray-600 text-sm font-semibold border-t w-full h-10 bottom-0 p-3 left-0 ">
+            &copy; 2025 Oronix Groceries. All rights reserved.
+        </footer>
+
+        <!-- Scripts -->
+        <script type="module" src="js/checkout.js"></script>
+    </body>
+</html>

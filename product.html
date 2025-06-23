@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="images/favicon.png">
+        <title>ORONIX Groceries - PRODUCT</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/flowbite@1.6.5/dist/flowbite.js"></script>
+    </head>
+    <body class="bg-[#f7fdff] min-h-screen flex flex-col overflow-hidden">
+        <!-- Navigation Bar -->
+        <nav class="w-full bg-white px-6 py-4 shadow-md">
+            <div class="container mx-auto items-center grid grid-cols-2 flex justify-between">
+                <!-- Logo -->
+                <div class="flex justify-start">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <img src="images/logo.png" alt="Logo" class="w-[160px] h-auto object-contain">
+                    </a>
+                </div>
+
+                <!-- Cart Icon -->
+                <div class="flex justify-end">
+                    <button aria-label="Cart" onclick="location.href='cart.html'">
+                       <svg class="w-7 h-7 text-gray-900 hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 2l1 6h10l1-6M4 8h16l-1.5 14H5.5L4 8z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Product Section -->
+        <main class="flex-grow container mx-auto px-6 pb-4">
+            <!-- Back Button -->
+            <button onclick="history.back()" class="text-blue-600 hover:text-blue-400 text-xl font-semibold flex justify-start mt-3 mb-3">
+                ← Back
+            </button>
+            <div id="product-details" class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center"></div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-blue-400 bg-opacity-20 items-center text-center text-gray-600 text-sm font-semibold border-t w-full h-10 bottom-0 p-3 left-0 ">
+            &copy; 2025 Oronix Groceries. All rights reserved.
+        </footer>
+
+        <!-- Scripts -->
+        <script type="module" src="js/product.js"></script>
+    </body>
+</html>

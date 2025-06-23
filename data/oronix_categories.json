@@ -1,0 +1,62 @@
+[
+  {
+    "id":1,
+    "category_name":"Fruits",
+    "description":"Fresh, juicy, and colorful fruits that bring sweetness and health to your day. A vibrant selection of apples, bananas, grapes, and more \u2013 perfect for snacking, cooking, or dessert."
+  },
+  {
+    "id":2,
+    "category_name":"Vegetables",
+    "description":"Crisp and nourishing vegetables straight from the field. Everything you need for a balanced meal \u2013 tomatoes, cucumbers, lettuce, potatoes, and other green delights."
+  },
+  {
+    "id":3,
+    "category_name":"Dairy",
+    "description":"Our dairy corner includes rich yogurts, creamy cheeses, fresh milk, and smooth butter \u2013 everything to elevate your breakfast, coffee, or family meal."
+  },
+  {
+    "id":4,
+    "category_name":"Breads",
+    "description":"Warm, comforting bakery goods \u2013 from crusty breads and soft pitas to rich cakes and flaky pastries. Perfect for any time of day."
+  },
+  {
+    "id":5,
+    "category_name":"Meats",
+    "description":"Premium cuts of meat, tender poultry, and fresh fish for hearty meals, festive barbecues, or everyday cooking with a homemade touch."
+  },
+  {
+    "id":6,
+    "category_name":"Pantry Items",
+    "description":"Your go-to kitchen essentials \u2013 rice, flour, oils, spices, sauces, and canned goods. A pantry full of possibilities for last-minute meals or culinary creativity."
+  },
+  {
+    "id":7,
+    "category_name":"Snacks",
+    "description":"Whether you crave sweet, salty, or crunchy \u2013 here you'll find cookies, chips, chocolates, and all the goodies that brighten your day."
+  },
+  {
+    "id":8,
+    "category_name":"Drinks",
+    "description":"A variety of hot and cold beverages \u2013 morning coffee, fresh juice, evening tea, sparkling soda, and everything in between for every occasion."
+  },
+  {
+    "id":9,
+    "category_name":"Household and cleaning",
+    "description":"Everything to keep your home clean, fresh, and organized \u2013 cleaning products, paper goods, soaps, and disposable items."
+  },
+  {
+    "id":10,
+    "category_name":"Personal care",
+    "description":"Daily essentials to help you feel your best \u2013 shampoos, soaps, deodorants, toothbrushes, and other personal hygiene must-haves."
+  },
+  {
+    "id":11,
+    "category_name":"Pet care",
+    "description":"Because your furry friends deserve the best \u2013 quality pet food, toys, treats, and grooming products that show your love."
+  },
+  {
+    "id":12,
+    "category_name":" Baby care",
+    "description":"Gentle and essential products for the little ones \u2013 high-quality diapers, soft wipes, soothing lotions, bottles, and more to make parenting easier and sweeter."
+  }
+]

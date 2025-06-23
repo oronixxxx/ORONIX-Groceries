@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="images/favicon.png">
+        <title>ORONIX Groceries - CART</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/flowbite@1.6.5/dist/flowbite.js"></script>
+    </head>
+    <body class="bg-[#f7fdff] overflow-hidden min-h-screen flex flex-col">
+        <!-- Navigation Bar -->
+        <nav class="w-full bg-white px-6 py-4 shadow-md">
+            <div class="container mx-auto grid grid-cols-2 items-center">
+                <!-- Logo -->
+                <div class="flex justify-start">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <img src="images/logo.png" alt="Logo" class="w-[160px] h-auto object-contain">
+                    </a>
+                </div>
+                
+                <!-- Checkout -->
+                <div class="flex justify-end">
+                    <a href="checkout.html" aria-label="Cart">
+                        <button class="checkout-button flex items-center w-80 justify-center bg-blue-600 text-white px-2 py-2 rounded-lg hover:bg-blue-400 transition duration-300">
+                            <span class="ml-2">Checkout</span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Cart Section -->
+        <main class="flex-grow container max-w-7xl mx-auto px-6 pb-4 flex flex-col">
+            <!-- Back Button -->
+            <button onclick="history.back()" class="text-blue-600 hover:text-blue-400 text-xl font-semibold flex justify-start mt-3 mb-3">
+                ← Back
+            </button>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center h-full max-h-[calc(100vh-225px)] overflow-hidden ">
+                <div class="container mx-auto grid grid-cols-2 items-center mb-5 border-b p-5">  
+                    <h2 class="text-3xl font-bold flex justify-start">Your Cart</h2>
+                    <!-- Add items button -->
+                    <div class="flex justify-end">
+                        <a href="products.html" aria-label="Cart">
+                            <button class="checkout-button flex items-center w-40 justify-center bg-blue-600 text-white px-2 py-2 rounded-lg hover:bg-blue-400 transition duration-300">
+                                <span class="ml-2">Add items</span>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- items -->
+                <div id="cart-items" class="w-full flex flex-col gap-4 mb-4 overflow-y-auto pr-2" style="max-height: 100%; scrollbar-width: none; -ms-overflow-style: none;"></div>
+
+                <!-- total price-->
+                <div id="total-price" class="text-blue-500 text-xl font-semibold w-full"></div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-blue-400 bg-opacity-20 text-center text-gray-600 text-sm font-semibold border-t w-full h-10 p-3">
+            &copy; 2025 Oronix Groceries. All rights reserved.
+        </footer>
+
+        <!-- Scripts -->
+        <script type="module" src="js/cart.js"></script>
+    </body>
+</html>

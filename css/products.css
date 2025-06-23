@@ -1,0 +1,11 @@
+[data-category] {
+  transition: all 0.3s ease-in-out;
+  border: none !important;
+  outline: none !important;
+}
+[data-category]:focus,
+[data-category]:hover,
+[data-category]:active {
+  border: none !important;
+  outline: none !important;
+}
