@@ -1,0 +1,56 @@
+[ 
+    { 
+        "id":1,
+        "api_name":"fetchAllItems",
+        "description":"Fetch all items from DB",
+        "arguments":"none"
+    },
+    {
+        "id":2,
+        "api_name":"fetchAllCategories",
+        "description":"Fetch all the categories.",
+        "arguments":"none"
+    },
+    {
+        "id":3,
+        "api_name":"fetchAllColors",
+        "description":"Fetch all the colors.",
+        "arguments":"none"
+    },
+    {
+        "id":4,
+        "api_name":"addItemToCart",
+        "description":"Add item to user cart.",
+        "arguments":"User credenials and item id"
+    },
+    {
+        "id":5,
+        "api_name":"removeItemFromCart",
+        "description":"Remove item from user cart.",
+        "arguments":"User credenials and item id"
+    },
+    {
+        "id":6,
+        "api_name":"updateItemQuantity",
+        "description":"Update item's quantity in user cart.",
+        "arguments":"User credenials and item id"
+    },
+    {
+        "id":7,
+        "api_name":"fetchItemDetails",
+        "description":"Fetch item details from DB.",
+        "arguments":"Item id"
+    },
+    {
+        "id":8,
+        "api_name":"fetchCartItems",
+        "description":"Fetch user cart items from DB.",
+        "arguments":"User credenials"
+    },
+    {
+        "id":9,
+        "api_name":"placeOrder",
+        "description":"Place user order and send confirmation message (optional).",
+        "arguments":"User credenials"
+    }
+]

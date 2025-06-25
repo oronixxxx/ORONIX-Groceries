@@ -22,8 +22,8 @@ async function loadCartItems() {
 
     if (cartItems.length === 0) {
         container.innerHTML = `
-            <div class="text-gray-500 text-center py-8">
-                Your cart is empty. Go add something delicious!
+            <div class="text-gray-500 text-center text-lg">
+                Your cart is empty. Go add some items!
             </div>
         `;
         totalPriceElement.textContent = '';

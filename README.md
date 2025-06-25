@@ -26,7 +26,7 @@ The project is built using the following AWS services and cloud technologies:
 | **Amazon API Gateway** | Routing HTTP requests to Lambda functions              |
 | **Amazon DynamoDB**    | NoSQL database for storing user and product data       |
 | **Amazon Cognito**     | User authentication and authorization                  |
-| **Amazon SNS**         | Sending real-time notifications (optional/extendable)  |
+| **Amazon SNS**         | Sending real-time notifications (optional)             |
 
 ---
 
@@ -37,6 +37,4 @@ The project is built using the following AWS services and cloud technologies:
 3. The Lambda functions handle logic such as adding items to the cart or fetching product data.
 4. All user and product data is stored in **Amazon DynamoDB**.
 5. Authentication is managed via **Amazon Cognito**, which secures user access.
-6. To recieve the discount code users register with their mail and get the discount code using **Amazon SNS**.
-
-
+6. To recieve the discount code users register with their mail and get the discount code using **Amazon SNS**. (optional)
