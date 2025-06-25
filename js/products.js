@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         brown: "images/colors/brown.png",
         blue: "images/colors/blue.png",
         colorful: "images/colors/colorful.png",
-        gray: "images/colors/gray.png",
+        purple: "images/colors/purple.png",
         blue: "images/colors/blue.png"
       };
       return imageMap[color] || "";

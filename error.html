@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <title>Error - Oronix Groceries</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/flowbite@1.6.5/dist/flowbite.js"></script>
+</head>
+<body class="bg-white min-h-screen flex flex-col overflow-hidden">
+  
+  <!-- Navigation Bar -->
+  <nav class="w-full bg-white px-6 py-4 shadow-md">
+    <div class="container mx-auto grid grid-cols-3 items-center">
+      <!-- Logo -->
+      <div class="flex justify-start">
+        <a href="index.html" class="flex items-center space-x-2">
+          <img src="images/logo.png" alt="Logo" class="w-[160px] h-auto object-contain">
+        </a>
+      </div>
+      <!-- Empty center for spacing -->
+      <div></div>
+      <!-- Cart Icon -->
+      <div class="flex justify-end">
+        <a href="checkout.html" aria-label="Cart">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-gray-900 hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 2l1 6h10l1-6M4 8h16l-1.5 14H5.5L4 8z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Back Button -->
+  <button onclick="history.back()" class="text-gray-900 hover:text-blue-400 text-xl font-semibold flex justify-start ml-10 mt-4">
+    ← Back
+  </button>
+
+  <!-- Error Content -->
+  <main class="flex-grow container mx-auto px-6 py-20 text-center">
+    <h1 class="text-6xl font-extrabold text-blue-500 mb-4">Oops!</h1>
+    <p class="text-lg text-gray-700 mb-6">The page you're looking for doesn't exist or an error occurred.</p>
+    <a href="index.html" class="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition">
+      Return to Home
+    </a>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-400 bg-opacity-20 items-center text-center text-gray-600 text-sm font-semibold border-t w-full h-10 bottom-0 p-3 left-0 ">
+    &copy; 2025 Oronix Groceries. All rights reserved.
+  </footer>
+
+</body>
+</html>
