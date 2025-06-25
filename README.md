@@ -1,10 +1,10 @@
 # ORONIX Groceries
 
-ORONIX Groceries is a modern, cloud-based online grocery shopping platform designed to simplify and enhance the user experience of purchasing food and household items from home. The system is optimized for performance, accessibility, and scalability using serverless AWS technologies.
+**ORONIX Groceries** is a modern, cloud-based online grocery shopping platform designed to simplify and enhance the user experience of purchasing food and household items from home. The system is optimized for performance, accessibility, and scalability using serverless AWS technologies.
 
 ## 🛒 Project Overview
 
-ORONIX Groceries provides a seamless and intuitive shopping experience with the following core features:
+**ORONIX Groceries** provides a seamless and intuitive shopping experience with the following core features:
 
 - **Dynamic Product Catalog**: View products with images, descriptions, categories, and prices.
 - **Advanced Search and Filtering**: Easily find products by name or category.
@@ -37,4 +37,6 @@ The project is built using the following AWS services and cloud technologies:
 3. The Lambda functions handle logic such as adding items to the cart or fetching product data.
 4. All user and product data is stored in **Amazon DynamoDB**.
 5. Authentication is managed via **Amazon Cognito**, which secures user access.
-6. To recieve the discount code users register with their mail and get the discount code using **Amazon SNS**. (optional)
+6. To recieve the discount code users register with their mail and get the discount code using **Amazon SNS**.
+
+
