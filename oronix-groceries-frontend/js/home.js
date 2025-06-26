@@ -3,10 +3,20 @@ let visibleItems = 4;
 let totalItems = 0;
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // helper: if window.config isn't ready yet, wait for the 'configLoaded' event
+  function waitForConfig() {
+    return window.config
+      ? Promise.resolve()
+      : new Promise(resolve => window.addEventListener('configLoaded', resolve));
+  }
+  
+// Waiting for config to finish loading before calling the API
+  await waitForConfig();
+
   const track = document.getElementById("categoryTrack");
 
   try {
-    const res = await fetch("data/oronix_categories.json");
+    const res = await fetch("data/oronix_categories.json"); // fetch from local data files
     const categories = await res.json();
 
     totalItems = categories.length;
@@ -45,4 +55,36 @@ function scrollCategories(direction) {
   const scrollAmount = currentIndex * itemWidth * visibleItems;
 
   track.style.transform = `translateX(-${scrollAmount}px)`;
+}
+
+async function fetchAllCategories() {
+  const fetchAllCategoriesAPI = window.config.api.fetchAllCategories;
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": sessionStorage.getItem("tokenId")
+  };
+
+
+  console.log(headers);
+  console.log("Fetching tasks from the database.");
+
+  try {
+    const response = await fetch(apiUrlTasks, {
+      method: "GET",
+      headers,
+      mode: "cors",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const responseBody = await response.json();
+    console.log("Tasks fetched successfully.", responseBody.data);
+    return responseBody.data || [];
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    return [];
+  }
 }

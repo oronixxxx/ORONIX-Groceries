@@ -14,7 +14,7 @@
 
     "admin": {
       "⁠addItemToInventory": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/admin/add-item",      
-      "deleteFromInventory": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/admin/remove-item",
+      "deleteFromInventory": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/admin/remove-item"
     }
   },
   "cognito": {
