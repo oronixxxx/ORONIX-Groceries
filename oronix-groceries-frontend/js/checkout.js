@@ -68,8 +68,45 @@ async function placeOrder() {
 
     // Here should be the logic to aws
     console.log('Placing order...', order);
+    
+    // --- START aws integration logic ---
+    const placeOrderAPI = window.config.api.placeOrder;
+    const headers = {
+        "Content-Type": "application/json",
+        "Authorization": sessionStorage.getItem("tokenId")
+    };
+    let body = {
+        "orderItems": await getCartItems()
+    };
 
-    alert('Order placed successfully!\n(Stored in console for mock)');
-    clearCart();
-    window.location.href = 'thankyou.html';
+    try {
+        const response = await fetch(placeOrderAPI, {
+            method: "POST",
+            headers: headers,
+            mode: "cors",
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const responseBody = await response.json();
+        console.log("Order Message:", responseBody.message);
+        console.log("Order Details:", responseBody.data);
+        
+        clearCart();
+        window.location.href = 'thankyou.html';
+        //window.location.href = window.config.app.thankyouPageUrl;
+
+        return true;
+    } catch (error) {
+        console.error("Error fetching Item Details:", error);
+        return false;
+    }
+    // --- END aws integration logic ---
+
+    // alert('Order placed successfully!\n(Stored in console for mock)');
+    //clearCart();
+    //window.location.href = 'thankyou.html';
 }
