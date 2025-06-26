@@ -1,0 +1,14 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CloudFormation template - Oronix Groceries project",
+  "Parameters": {
+    "EnvName": {
+      "Type": "String",
+      "Description": "Environment name like 'dev', 'prod'"
+    }
+  },
+  "Resources": {
+  },
+  "Outputs": {
+  }
+}

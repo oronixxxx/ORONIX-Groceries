@@ -1,0 +1,203 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Main CloudFormation template for Oronix Groceries project",
+  "Parameters": {
+    "EnvName": {
+      "Type": "String",
+      "Description": "Environment name like 'dev', 'prod'"
+    },
+    "AssetsBucketName": {
+      "Type": "String",
+      "Description": "Name of the S3 bucket for project assets"
+    },
+    "WebsiteBucketName": {
+      "Type": "String",
+      "Description": "Name of the S3 bucket for frontend static website"
+    },
+    "WebsiteBucketTemplateURL": {
+      "Type": "String",
+      "Description": "S3 URL for the nested website bucket template"
+    },
+    "CognitoTemplateURL": {
+      "Type": "String",
+      "Description": "S3 URL for the nested Cognito template"
+    },
+    "PostLoginCallbackURLs": {
+      "Type": "String",
+      "Description": "Comma-separated list of URLs for redirect after login"
+    },
+    "PostLogOutURLs": {
+      "Type": "String",
+      "Description": "Comma-separated list of URLs for redirect after logout"
+    },
+    "PostConfirmationLambdaS3Key": {
+      "Type": "String",
+      "Description": "Key of the Lambda file in the assets bucket"
+    },
+    "LambdaCodeS3Key": {
+      "Type": "String",
+      "Description": "S3 Key of the Lambda ZIP file containing all handler scripts"
+    },
+    "LambdaFunctionsTemplateURL": {
+      "Type": "String",
+      "Description": "S3 URL of the nested template that defines the project's Lambda functions"
+    },
+    "ApiTemplateURL": {
+      "Type": "String",
+      "Description": "S3 URL for the nested API template"
+    },
+    "StageName": {
+      "Type": "String",
+      "Description": "Stage name for API Gateway (e.g., 'Prod')"
+    },
+    "DynamoDBTablesTemplateURL": {
+      "Type": "String",
+      "Description": "S3 URL for the nested DynamoDB tables template"
+    },
+    "LabRoleArn": {
+      "Type": "String",
+      "Description": "IAM role ARN"
+    }    
+  },
+  "Resources": {
+    "WebsiteBucketStack": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": {
+          "Ref": "WebsiteBucketTemplateURL"
+        },
+        "Parameters": {
+          "EnvName": { "Ref": "EnvName" },
+          "WebsiteBucketName": { "Ref": "WebsiteBucketName" }
+        }
+      }
+    },
+    "CognitoStack": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": { 
+          "Ref": "CognitoTemplateURL"
+        },
+        "Parameters": {
+          "EnvName": { "Ref": "EnvName" },
+          "AssetsBucketName": { "Ref": "AssetsBucketName" },
+          "PostConfirmationLambdaS3Key": { "Ref": "PostConfirmationLambdaS3Key" },
+          "PostLoginCallbackURLs": { "Ref": "PostLoginCallbackURLs" },
+          "PostLogOutURLs": { "Ref": "PostLogOutURLs" },
+          "LabRoleArn": { "Ref": "LabRoleArn" }
+        }
+      }
+    },
+    "LambdaFunctionsStack": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["CognitoStack", "DynamoDBTablesStack" ],
+      "Properties": {
+        "TemplateURL": { "Ref": "LambdaFunctionsTemplateURL" },
+        "Parameters": {
+          "EnvName": { "Ref": "EnvName" },
+          "AssetsBucketName": { "Ref": "AssetsBucketName" },
+          "LambdaCodeS3Key": { "Ref": "LambdaCodeS3Key" },
+          "CognitoUserPoolId": {
+            "Fn::GetAtt": ["CognitoStack", "Outputs.CognitoUserPoolId"]
+          },
+          "AdminGroupName": {
+            "Fn::GetAtt": ["CognitoStack", "Outputs.AdminGroupName"]
+          },
+          "UserGroupName": {
+            "Fn::GetAtt": ["CognitoStack", "Outputs.UserGroupName"]
+          },          
+          "DynamoDBTableUsersName": {
+            "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableUsersName"]
+          },
+          "LabRoleArn": { "Ref": "LabRoleArn" }
+        }
+      }
+    },
+    "ApiStack": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["CognitoStack", "LambdaFunctionsStack"],
+      "Properties": {
+        "TemplateURL": { 
+          "Ref": "ApiTemplateURL" 
+        },
+        "Parameters": {
+          "EnvName": { "Ref": "EnvName" },
+          "StageName": { "Ref": "StageName" },
+          "CognitoUserPoolArn": {
+            "Fn::GetAtt": ["CognitoStack", "Outputs.CognitoUserPoolArn"]
+          },
+          "ListUsersLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.ListUsersLambdaFunctionArn"]
+          },
+          "GetUserDetailsLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.GetUserDetailsLambdaFunctionArn"]
+          },
+          "LabRoleArn": { "Ref": "LabRoleArn" }
+        }
+      }
+    },
+    "DynamoDBTablesStack": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": { "Ref": "DynamoDBTablesTemplateURL" },
+        "Parameters": {
+          "EnvName": { "Ref": "EnvName" }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "WebsiteBucketStackOutput": {
+      "Description": "Nested buckets stack name",
+      "Value": { "Ref": "WebsiteBucketStack" }
+    },
+    "CognitoStackOutput": {
+      "Description": "Nested Cognito stack name",
+      "Value": { "Ref": "CognitoStack" }
+    },
+    "CognitoUserPoolId": {
+      "Description": "ID of the Cognito User Pool",
+      "Value": {
+        "Fn::GetAtt": [
+          "CognitoStack",
+          "Outputs.CognitoUserPoolId"
+        ]
+      }
+    },
+    "CognitoUserPoolDomainPrefix": {
+      "Description": "Domain prefix of Cognito Hosted UI",
+      "Value": {
+        "Fn::GetAtt": [
+          "CognitoStack",
+          "Outputs.CognitoUserPoolDomainPrefix"
+        ]
+      }
+    },
+    "CognitoUserPoolClientId": {
+      "Description": "ID of the Cognito App Client",
+      "Value": {
+        "Fn::GetAtt": [
+          "CognitoStack",
+          "Outputs.CognitoUserPoolClientId"
+        ]
+      }
+    },
+    "ApiStackName": {
+      "Description": "Nested API stack name",
+      "Value": { "Ref": "ApiStack" }
+    },
+    "ApiId": {
+      "Description": "ID of the API Gateway",
+      "Value": {
+        "Fn::GetAtt": [
+          "ApiStack",
+          "Outputs.ApiId"
+        ]
+      }
+    },
+    "DynamoDBTablesStackName": {
+      "Description": "Nested DynamoDB tables stack name",
+      "Value": { "Ref": "DynamoDBTablesStack" }
+    }
+  }
+}
