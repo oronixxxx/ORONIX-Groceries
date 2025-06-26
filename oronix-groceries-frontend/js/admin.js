@@ -1,4 +1,4 @@
-let localItems = [];
+/* let localItems = [];
 let categories = [];
 let colors = [];
 
@@ -114,4 +114,5 @@ form.addEventListener('submit', (e) => {
   form.classList.add('hidden');
   tableContainer.classList.remove('hidden');
   renderItems();
-});
+}); */
+
