@@ -1,0 +1,27 @@
+{
+  "api": {
+    "fetchAllItems": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/items",
+    "fetchItemDetails": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/items/item",
+    "fetchAllCategories": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/categories",
+    "fetchAllColors": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/colors",
+    "cart": {
+      "fetchCartItems":          "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart",
+      "addItemToCart":          "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart/add",
+      "updateCartItemQuantity":       "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart/update",
+      "deleteItemFromCart":       "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart/remove"
+    },
+    "placeOrder":    "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/order",
+
+    "admin": {
+      "⁠addItemToInventory": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/admin/add-item",      
+      "deleteFromInventory": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/admin/remove-item",
+    }
+  },
+  "cognito": {
+    "loginUrl": "https://us-east-1hc8c6ndsz.auth.us-east-1.amazoncognito.com/login?client_id=65j1blf8nb4m0n7opashv3ou6m&response_type=code&scope=email+openid+phone&redirect_uri=https%3A%2F%2Foronix-groceries-website-dev.s3.us-east-1.amazonaws.com%2Findex.html" 
+  },
+  "app": { 
+    "homePageUrl": "https://oronix-groceries-website-dev.s3.us-east-1.amazonaws.com/homePage.html", 
+    "indexPageUrl": "https://oronix-groceries-website-dev.s3.us-east-1.amazonaws.com/index.html" 
+  }
+}
