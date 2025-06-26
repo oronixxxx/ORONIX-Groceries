@@ -1,0 +1,184 @@
+{
+  "Categories": [
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "1"
+          },
+          "category_name": {
+            "S": "Fruits"
+          },
+          "description": {
+            "S": "Fresh, juicy, and colorful fruits that bring sweetness and health to your day. A vibrant selection of apples, bananas, grapes, and more – perfect for snacking, cooking, or dessert."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "2"
+          },
+          "category_name": {
+            "S": "Vegetables"
+          },
+          "description": {
+            "S": "Crisp and nourishing vegetables straight from the field. Everything you need for a balanced meal – tomatoes, cucumbers, lettuce, potatoes, and other green delights."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "3"
+          },
+          "category_name": {
+            "S": "Dairy"
+          },
+          "description": {
+            "S": "Our dairy corner includes rich yogurts, creamy cheeses, fresh milk, and smooth butter – everything to elevate your breakfast, coffee, or family meal."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "4"
+          },
+          "category_name": {
+            "S": "Breads"
+          },
+          "description": {
+            "S": "Warm, comforting bakery goods – from crusty breads and soft pitas to rich cakes and flaky pastries. Perfect for any time of day."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "5"
+          },
+          "category_name": {
+            "S": "Meats"
+          },
+          "description": {
+            "S": "Premium cuts of meat, tender poultry, and fresh fish for hearty meals, festive barbecues, or everyday cooking with a homemade touch."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "6"
+          },
+          "category_name": {
+            "S": "Pantry Items"
+          },
+          "description": {
+            "S": "Your go-to kitchen essentials – rice, flour, oils, spices, sauces, and canned goods. A pantry full of possibilities for last-minute meals or culinary creativity."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "7"
+          },
+          "category_name": {
+            "S": "Snacks"
+          },
+          "description": {
+            "S": "Whether you crave sweet, salty, or crunchy – here you'll find cookies, chips, chocolates, and all the goodies that brighten your day."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "8"
+          },
+          "category_name": {
+            "S": "Drinks"
+          },
+          "description": {
+            "S": "A variety of hot and cold beverages – morning coffee, fresh juice, evening tea, sparkling soda, and everything in between for every occasion."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "9"
+          },
+          "category_name": {
+            "S": "Household and cleaning"
+          },
+          "description": {
+            "S": "Everything to keep your home clean, fresh, and organized – cleaning products, paper goods, soaps, and disposable items."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "10"
+          },
+          "category_name": {
+            "S": "Personal care"
+          },
+          "description": {
+            "S": "Daily essentials to help you feel your best – shampoos, soaps, deodorants, toothbrushes, and other personal hygiene must-haves."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "11"
+          },
+          "category_name": {
+            "S": "Pet care"
+          },
+          "description": {
+            "S": "Because your furry friends deserve the best – quality pet food, toys, treats, and grooming products that show your love."
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "N": "12"
+          },
+          "category_name": {
+            "S": " Baby care"
+          },
+          "description": {
+            "S": "Gentle and essential products for the little ones – high-quality diapers, soft wipes, soothing lotions, bottles, and more to make parenting easier and sweeter."
+          }
+        }
+      }
+    }
+  ]
+}
