@@ -9,20 +9,29 @@ document.addEventListener("DOMContentLoaded", async () => {
       ? Promise.resolve()
       : new Promise(resolve => window.addEventListener('configLoaded', resolve));
   }
-  
-// Waiting for config to finish loading before calling the API
+  // Waiting for config to finish loading before calling the API
   await waitForConfig();
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn.addEventListener("click", function (event) {
+    event.preventDefault();
+    sessionStorage.clear();
+    window.location.href = window.config.app.homePageUrl;
+  });
 
   const track = document.getElementById("categoryTrack");
 
   try {
-    const res = await fetch("data/oronix_categories.json"); // fetch from local data files
-    const categories = await res.json();
+    // const res = await fetch("data/oronix_categories.json"); // fetch from local data files
+    // const categories = await res.json();
+
+    const categories = await fetchAllCategories();
 
     totalItems = categories.length;
 
     categories.forEach(cat => {
-      const cleanName = cat.category_name.trim();
+      //const cleanName = cat.category_name.trim();
+      const cleanName = cat.categoryName.trim();
       const imageName = cleanName.toLowerCase().replace(/\s/g, '');
       const urlParam = encodeURIComponent(cleanName);
 
@@ -65,12 +74,11 @@ async function fetchAllCategories() {
     "Authorization": sessionStorage.getItem("tokenId")
   };
 
-
   console.log(headers);
-  console.log("Fetching tasks from the database.");
+  console.log("Fetching Categories from the database.");
 
   try {
-    const response = await fetch(apiUrlTasks, {
+    const response = await fetch(fetchAllCategoriesAPI, {
       method: "GET",
       headers,
       mode: "cors",
@@ -81,10 +89,12 @@ async function fetchAllCategories() {
     }
 
     const responseBody = await response.json();
-    console.log("Tasks fetched successfully.", responseBody.data);
+    console.log("Categories fetched successfully.", responseBody.data);
     return responseBody.data || [];
+
   } catch (error) {
-    console.error("Error fetching tasks:", error);
+    console.error("Error fetching Categories:", error);
     return [];
   }
 }
+

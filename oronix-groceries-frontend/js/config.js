@@ -24,6 +24,6 @@
   } catch (error) {
     console.error('Failed to load config.json:', error);
     // redirect to error page on failure
-    // window.location.href = 'error.html';
+    window.location.href = 'error.html';
   }
 })();
