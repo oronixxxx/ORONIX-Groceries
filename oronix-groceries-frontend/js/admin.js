@@ -116,3 +116,101 @@ form.addEventListener('submit', (e) => {
   renderItems();
 }); */
 
+d// Replace with your actual API Gateway URLs
+const ADD_ITEM_API = 'https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/admin/add-item';
+const DELETE_ITEM_API = 'https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/admin/remove-item';
+const FETCH_ITEMS_API = 'https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/items';
+const FETCH_COLORS_API = 'https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/colors';
+const FETCH_CATEGORIES_API = 'https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/categories';
+
+// Fetch all items and display them in a table
+async function fetchItemsAndDisplay() {
+  try {
+    const response = await fetch(FETCH_ITEMS_API);
+    const result = await response.json();
+    const items = result.data || [];
+
+    const tableBody = document.getElementById('item-table-body');
+    tableBody.innerHTML = '';
+
+    items.forEach(item => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${item.id}</td>
+        <td>${item.name}</td>
+        <td>${item.price}</td>
+        <td>${item.category}</td>
+        <td>${item.color}</td>
+        <td>${item.description || ''}</td>
+        <td>
+          <button class="delete-btn text-red-500 underline" data-id="${item.id}">Delete</button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+
+    // Attach delete handlers
+    document.querySelectorAll('.delete-btn').forEach(button => {
+      button.addEventListener('click', async () => {
+        const itemId = button.dataset.id;
+        if (!confirm(`Are you sure you want to delete item ${itemId}?`)) return;
+
+        try {
+          const res = await fetch(DELETE_ITEM_API, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': localStorage.getItem('token') || ''
+            },
+            body: JSON.stringify({ id: parseInt(itemId) })
+          });
+          const result = await res.json();
+          alert(result.message);
+          fetchItemsAndDisplay(); // Refresh table
+        } catch (err) {
+          alert('Failed to delete item: ' + err.message);
+        }
+      });
+    });
+  } catch (err) {
+    alert('Failed to load items: ' + err.message);
+  }
+}
+
+// Handle add item form submission
+document.getElementById('add-item-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById('item-name').value.trim();
+  const price = parseFloat(document.getElementById('item-price').value);
+  const category = document.getElementById('item-category').value;
+  const color = document.getElementById('item-color').value;
+  const description = document.getElementById('item-description').value;
+
+  try {
+    const res = await fetch(ADD_ITEM_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token') || ''
+      },
+      body: JSON.stringify({
+        name,
+        price,
+        category,
+        color,
+        description
+      })
+    });
+
+    const result = await res.json();
+    alert(result.message);
+    fetchItemsAndDisplay();
+    e.target.reset();
+  } catch (err) {
+    alert('Failed to add item: ' + err.message);
+  }
+});
+
+// Load items on page load
+document.addEventListener('DOMContentLoaded', fetchItemsAndDisplay);
