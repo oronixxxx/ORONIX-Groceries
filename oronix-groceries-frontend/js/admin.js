@@ -116,101 +116,160 @@ form.addEventListener('submit', (e) => {
   renderItems();
 }); */
 
-d// Replace with your actual API Gateway URLs
-const ADD_ITEM_API = 'https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/admin/add-item';
-const DELETE_ITEM_API = 'https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/admin/remove-item';
-const FETCH_ITEMS_API = 'https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/items';
-const FETCH_COLORS_API = 'https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/colors';
-const FETCH_CATEGORIES_API = 'https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/categories';
+let allItems = []; 
 
-// Fetch all items and display them in a table
-async function fetchItemsAndDisplay() {
-  try {
-    const response = await fetch(FETCH_ITEMS_API);
-    const result = await response.json();
-    const items = result.data || [];
+// Load config.json and store it globally
+fetch('./config.json')
+  .then(res => res.json())
+  .then(data => {
+    window.config = data;
+    window.dispatchEvent(new Event('configLoaded'));
+  });
 
-    const tableBody = document.getElementById('item-table-body');
-    tableBody.innerHTML = '';
-
-    items.forEach(item => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${item.id}</td>
-        <td>${item.name}</td>
-        <td>${item.price}</td>
-        <td>${item.category}</td>
-        <td>${item.color}</td>
-        <td>${item.description || ''}</td>
-        <td>
-          <button class="delete-btn text-red-500 underline" data-id="${item.id}">Delete</button>
-        </td>
-      `;
-      tableBody.appendChild(row);
-    });
-
-    // Attach delete handlers
-    document.querySelectorAll('.delete-btn').forEach(button => {
-      button.addEventListener('click', async () => {
-        const itemId = button.dataset.id;
-        if (!confirm(`Are you sure you want to delete item ${itemId}?`)) return;
-
-        try {
-          const res = await fetch(DELETE_ITEM_API, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': localStorage.getItem('token') || ''
-            },
-            body: JSON.stringify({ id: parseInt(itemId) })
-          });
-          const result = await res.json();
-          alert(result.message);
-          fetchItemsAndDisplay(); // Refresh table
-        } catch (err) {
-          alert('Failed to delete item: ' + err.message);
-        }
-      });
-    });
-  } catch (err) {
-    alert('Failed to load items: ' + err.message);
-  }
+// Helper: wait for config to be available before proceeding
+function waitForConfig() {
+  return window.config
+    ? Promise.resolve()
+    : new Promise(resolve => window.addEventListener('configLoaded', resolve));
 }
 
-// Handle add item form submission
-document.getElementById('add-item-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
+// Main app logic
+waitForConfig().then(() => {
+  const categoryEndpoint = window.config.api.fetchAllCategories;
+  const colorEndpoint = window.config.api.fetchAllColors;
+  const itemsEndpoint = window.config.api.fetchAllItems;
+  const addItemEndpoint = window.config.api.admin.addItemToInventory;
+  const removeItemEndpoint = window.config.api.admin.deleteFromInventory;
 
-  const name = document.getElementById('item-name').value.trim();
-  const price = parseFloat(document.getElementById('item-price').value);
-  const category = document.getElementById('item-category').value;
-  const color = document.getElementById('item-color').value;
-  const description = document.getElementById('item-description').value;
+  const tableBody = document.getElementById('item-list');
+  const form = document.getElementById('add-item-form');
+  const toggleBtn = document.getElementById('toggle-add-form');
+  const categorySelect = document.getElementById('category-select');
+  const colorSelect = document.getElementById('color-select');
 
-  try {
-    const res = await fetch(ADD_ITEM_API, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': localStorage.getItem('token') || ''
-      },
-      body: JSON.stringify({
-        name,
-        price,
-        category,
-        color,
-        description
-      })
-    });
+  toggleBtn.addEventListener('click', () => {
+    const isHidden = form.classList.toggle('hidden');
+    tableBody.classList.toggle('hidden');
 
-    const result = await res.json();
-    alert(result.message);
-    fetchItemsAndDisplay();
-    e.target.reset();
-  } catch (err) {
-    alert('Failed to add item: ' + err.message);
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.classList.toggle('hidden');
+
+    toggleBtn.textContent = isHidden ? 'Add' : 'Cancel';
+  });
+
+  // Load categories and colors
+  Promise.all([
+    fetch(categoryEndpoint).then(res => res.json()),
+    fetch(colorEndpoint).then(res => res.json())
+  ]).then(([categoryData, colorData]) => {
+    const categories = categoryData.data || [];
+    const colors = colorData.data || [];
+
+    categorySelect.innerHTML = categories.map(cat =>
+      `<option value="${cat.categoryName}">${cat.categoryName}</option>`
+    ).join('');
+
+    colorSelect.innerHTML = colors.map(color =>
+      `<option value="${color.colorName}">${color.colorName}</option>`
+    ).join('');
+  });
+
+  // Load items and display them
+  function loadItems() {
+    fetch(itemsEndpoint)
+      .then(res => res.json())
+      .then(data => {
+        allItems = data.data || [];
+        renderItems(allItems);
+      });
   }
-});
 
-// Load items on page load
-document.addEventListener('DOMContentLoaded', fetchItemsAndDisplay);
+  // Filter items
+  function filterItems(query) {
+    const lower = query.toLowerCase();
+    const filtered = allItems.filter(item =>
+      item.name.toLowerCase().includes(lower)
+    );
+    renderItems(filtered);
+  }
+
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    filterItems(e.target.value);
+  });
+
+  function renderItems(items) {
+    tableBody.innerHTML = items.map(item => {
+      const fileName = item.name.toLowerCase().replace(/\s/g, '');
+
+      return `
+        <div class="flex items-start justify-between border rounded-lg p-4 shadow bg-white">
+          <div class="flex items-start gap-4 text-left">
+            <img
+              src="images/items/${fileName}.png"
+              onerror="this.onerror=null; this.src='images/logo.png';"
+              alt="${item.name}"
+              class="w-20 h-20 object-contain rounded-lg"
+            />  
+            <div>
+              <h3 class="font-semibold text-lg text-gray-800 mb-1">${item.name}</h3>
+              <p class="text-sm text-gray-600 mb-1">${item.description || ''}</p>
+              <p class="text-sm text-gray-700 font-medium">Price: ₪${item.price}</p>
+              <p class="text-sm text-gray-600">Category: ${item.category} | Color: ${item.color}</p>
+            </div>
+          </div>
+          <button class="bg-red-500 text-white px-3 py-1 rounded h-fit mt-2 delete-btn" data-id="${item.id}">
+            Delete
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        deleteItem(id);
+      });
+    });
+  }
+  // Handle item deletion
+  function deleteItem(id) {
+    fetch(removeItemEndpoint, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    }).then(res => res.json())
+      .then(() => {
+        loadItems(); // Refresh list
+      });
+  }
+
+  // Handle add item form
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const item = {
+      name: formData.get('name'),
+      price: parseFloat(formData.get('price')),
+      category: formData.get('category'),
+      color: formData.get('color'),
+      description: formData.get('description')
+    };
+
+    fetch(addItemEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item)
+    })
+      .then(res => res.json())
+      .then(() => {
+        form.reset();
+        form.classList.toggle('hidden');
+        tableBody.classList.toggle('hidden');
+        loadItems(); // Refresh list
+      });
+  });
+
+  // Initial load
+  loadItems();
+});
