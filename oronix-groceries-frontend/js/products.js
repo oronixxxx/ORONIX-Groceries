@@ -12,20 +12,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   let selectedColors = [];
   let searchQuery = "";
 
+  // helper: if window.config isn't ready yet, wait for the 'configLoaded' event
+  function waitForConfig() {
+    return window.config
+      ? Promise.resolve()
+      : new Promise(resolve => window.addEventListener('configLoaded', resolve));
+  }
+  // Waiting for config to finish loading before calling the API
+  await waitForConfig();
+
   try {
-    const [itemsRes, categoriesRes] = await Promise.all([
-      fetch("data/oronix_items.json"),
-      fetch("data/oronix_categories.json")
-    ]);
-    const items = await itemsRes.json();
-    const categories = await categoriesRes.json();
+    // const [itemsRes, categoriesRes] = await Promise.all([
+    //   fetch("data/oronix_items.json"),
+    //   fetch("data/oronix_categories.json")
+    // ]);
+    // const items = await itemsRes.json();
+    // const categories = await categoriesRes.json();
+
+    const items = await fetchAllItems();
+    const categories = await fetchAllCategories();
 
     allItems = items;
     filteredItems = items;
     // --- Render Categories ---
     categoryContainer.innerHTML = "";
     categories.forEach(cat => {
-      const cleanName = cat.category_name.trim();
+      const cleanName = cat.categoryName.trim();
       const checkbox = document.createElement("li");
       checkbox.innerHTML = `<input type="checkbox" class="mr-2 ml-6" value="${cleanName}">${cleanName}`;
       categoryContainer.appendChild(checkbox);
@@ -210,3 +222,67 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Failed to load data:", err);
   }
 });
+
+async function fetchAllCategories() {
+  const fetchAllCategoriesAPI = window.config.api.fetchAllCategories;
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": sessionStorage.getItem("tokenId")
+  };
+
+  console.log(headers);
+  console.log("Fetching Categories from the database.");
+
+  try {
+    const response = await fetch(fetchAllCategoriesAPI, {
+      method: "GET",
+      headers,
+      mode: "cors",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const responseBody = await response.json();
+    console.log("Categories fetched successfully.", responseBody.data);
+    return responseBody.data || [];
+
+  } catch (error) {
+    console.error("Error fetching Categories:", error);
+    return [];
+  }
+}
+
+async function fetchAllItems() {
+  const fetchAllItemsAPI = window.config.api.fetchAllItems;
+  
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": sessionStorage.getItem("tokenId")
+  };
+  
+  console.log(headers);
+  console.log("Fetching All Items from the database.");
+
+  try {
+    const response = await fetch(fetchAllItemsAPI, {
+      method: "GET",
+      headers,
+      mode: "cors",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const responseBody = await response.json();
+    console.log("Items fetched successfully.", responseBody.data);
+    return responseBody.data || [];
+
+  } catch (error) {
+    console.error("Error fetching Items:", error);
+    return [];
+  }
+}

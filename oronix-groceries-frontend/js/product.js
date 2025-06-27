@@ -4,12 +4,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
     const container = document.getElementById('product-details');
-    const cartItems = await getCartItems();
+    //const cartItems = await getCartItems();
+
+    // helper: if window.config isn't ready yet, wait for the 'configLoaded' event
+    function waitForConfig() {
+        return window.config
+        ? Promise.resolve()
+        : new Promise(resolve => window.addEventListener('configLoaded', resolve));
+    }
+    // Waiting for config to finish loading before calling the API
+    await waitForConfig();
 
     try {
-        const res = await fetch("data/oronix_items.json");
-        const items = await res.json();
-        const item = items.find(item => item.id === Number(productId));
+        const item = await fetchItemDetails(Number(productId));
+
+        // const res = await fetch("data/oronix_items.json");
+        // const items = await res.json();
+        // const item = items.find(item => item.id === Number(productId));
 
         if (!item) {
             container.innerHTML = '<p>Product not found.</p>';
@@ -44,3 +55,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+async function fetchItemDetails(itemId) {
+  if (!itemId) return false;
+  
+  console.log("Fetching Item Details from the database.");
+  const fetchItemDetailsAPI = `${window.config.api.fetchItemDetails}?id=${encodeURIComponent(itemId)}`;
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": sessionStorage.getItem("tokenId")
+  };
+
+  try {
+    const response = await fetch(fetchItemDetailsAPI, {
+      method: "GET",
+      headers: headers,
+      mode: "cors",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const responseBody = await response.json();
+    console.log("Item Details fetched successfully.", responseBody.data);
+    return responseBody.data || null;
+  } catch (error) {
+    console.error("Error fetching Item Details:", error);
+    return false;
+  }
+}
