@@ -1,6 +1,12 @@
 let currentIndex = 0;
 let visibleItems = 4;
 let totalItems = 0;
+const { app, api } = window.config;
+
+const headers = {
+  "Content-Type": "application/json",
+  "Authorization": sessionStorage.getItem("tokenId")
+};
 
 document.addEventListener("DOMContentLoaded", async () => {
   // helper: if window.config isn't ready yet, wait for the 'configLoaded' event
@@ -11,6 +17,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   // Waiting for config to finish loading before calling the API
   await waitForConfig();
+
+  // If Cognito just redirected back here with id_token in the hash → grab it
+  const hash = window.location.hash.substring(1);
+  const urlParams = new URLSearchParams(hash);
+  if (urlParams.has('id_token')) {
+    const token = urlParams.get('id_token');
+    sessionStorage.setItem('tokenId', token);
+    // // remove hash from URL so it won't be processed again
+    // history.replaceState(null, '', window.location.pathname);
+  }
+
+  // Now that token is saved (if it existed), we can safely read it
+  const token = sessionStorage.getItem('tokenId');
+  if (!token) {
+    // no token → force login
+    return window.location.href = app.homePageUrl;
+  }
+
+  await checkUserRole();
 
   const logoutBtn = document.getElementById("logoutBtn");
   logoutBtn.addEventListener("click", function (event) {
@@ -98,3 +123,33 @@ async function fetchAllCategories() {
   }
 }
 
+async function checkUserRole() {
+  const checkUserRoleAPI = api.checkUserRole;
+  
+  console.log(headers);
+  console.log("Checking user role.");
+
+  try {
+    const response = await fetch(checkUserRoleAPI, {
+      method: "GET",
+      headers,
+      mode: "cors"
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const responseBody = await response.json();
+    console.log(responseBody.message , responseBody.data);
+
+    if(responseBody.data.isAdmin){
+      return window.location.href = app.adminPageUrl;
+    }
+    return true;
+
+  } catch (error) {
+    console.error("Error checking user role:", error);
+    return window.location.href = app.errorPageUrl;
+  }
+}

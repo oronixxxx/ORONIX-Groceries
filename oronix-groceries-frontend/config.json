@@ -25,7 +25,8 @@
   "app": { 
     "homePageUrl": "https://oronix-groceries-website-dev.s3.us-east-1.amazonaws.com/homePage.html", 
     "indexPageUrl": "https://oronix-groceries-website-dev.s3.us-east-1.amazonaws.com/index.html",
-    "thankyouPageUrl": "https://oronix-groceries-website-dev.s3.us-east-1.amazonaws.com/thankyou.html" 
-    
+    "thankyouPageUrl": "https://oronix-groceries-website-dev.s3.us-east-1.amazonaws.com/thankyou.html", 
+    "adminPageUrl": "https://oronix-groceries-website-dev.s3.us-east-1.amazonaws.com/admin.html",
+    "errorPageUrl": "https://oronix-groceries-website-dev.s3.us-east-1.amazonaws.com/error.html"
   }
 }
