@@ -1,4 +1,6 @@
+import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
 import { addToCart, removeFromCart, getCartItems, updateCartItemQuantity } from './services/cartService.js';
+import { toCamelCase } from './services/imageService.js'
 
 document.addEventListener('DOMContentLoaded', async () => {
     const cartContainer = document.getElementById('cart-items');

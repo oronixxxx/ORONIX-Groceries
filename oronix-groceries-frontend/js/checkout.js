@@ -1,4 +1,6 @@
+import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
 import { getCartItems, clearCart } from './services/cartService.js';
+import { toCamelCase } from './services/imageService.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     loadCartItems();
@@ -36,6 +38,8 @@ async function loadCartItems() {
         
         // Build image path based on item name (you can adjust this logic as needed)
         const imageName = item.name.toLowerCase().replace(/\s/g, '');
+
+
         const imagePath = `images/items/${imageName}.png`;
 
         container.innerHTML += `
