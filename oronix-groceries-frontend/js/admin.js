@@ -116,25 +116,44 @@ form.addEventListener('submit', (e) => {
   renderItems();
 }); */
 
+// admin.js
+// Centralized logic for admin page: authorization guard, fetching and managing inventory items.
+import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
+import { toCamelCase } from './services/imageService.js';
+
 let allItems = []; 
 
-// Load config.json and store it globally
-fetch('./config.json')
-  .then(res => res.json())
-  .then(data => {
-    window.config = data;
-    window.dispatchEvent(new Event('configLoaded'));
+// // Load config.json and store it globally
+// fetch('./config.json')
+//   .then(res => res.json())
+//   .then(data => {
+//     window.config = data;
+//     window.dispatchEvent(new Event('configLoaded'));
+//   });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Helper: wait for config to be available before proceeding
+  function waitForConfig() {
+    return window.config
+      ? Promise.resolve()
+      : new Promise(resolve => window.addEventListener('configLoaded', resolve));
+  }
+
+  // Load configuration first, then enforce authentication and initialize the admin page
+  waitForConfig().then(() => {
+    // Ensure user is authenticated and token is valid before any further actions
+    ensureAuthenticated(window.config.cognito.loginUrl);
+
+    // After authentication check, initialize the page
+    initAdminPage();
   });
 
-// Helper: wait for config to be available before proceeding
-function waitForConfig() {
-  return window.config
-    ? Promise.resolve()
-    : new Promise(resolve => window.addEventListener('configLoaded', resolve));
-}
+});
 
-// Main app logic
-waitForConfig().then(() => {
+
+// Main admin logic, invoked after config load and auth guard
+function initAdminPage() {
   const categoryEndpoint = window.config.api.fetchAllCategories;
   const colorEndpoint = window.config.api.fetchAllColors;
   const itemsEndpoint = window.config.api.fetchAllItems;
@@ -146,6 +165,13 @@ waitForConfig().then(() => {
   const toggleBtn = document.getElementById('toggle-add-form');
   const categorySelect = document.getElementById('category-select');
   const colorSelect = document.getElementById('color-select');
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn.addEventListener("click", function (event) {
+    event.preventDefault();
+    sessionStorage.clear();
+    window.location.href = window.config.app.homePageUrl;
+  });
 
   toggleBtn.addEventListener('click', () => {
     const isHidden = form.classList.toggle('hidden');
@@ -159,8 +185,8 @@ waitForConfig().then(() => {
 
   // Load categories and colors
   Promise.all([
-    fetch(categoryEndpoint).then(res => res.json()),
-    fetch(colorEndpoint).then(res => res.json())
+    fetch(categoryEndpoint, { headers: getAuthHeaders() }).then(res => res.json()),
+    fetch(colorEndpoint,    { headers: getAuthHeaders() }).then(res => res.json())
   ]).then(([categoryData, colorData]) => {
     const categories = categoryData.data || [];
     const colors = colorData.data || [];
@@ -176,7 +202,7 @@ waitForConfig().then(() => {
 
   // Load items and display them
   function loadItems() {
-    fetch(itemsEndpoint)
+    fetch(itemsEndpoint, { headers: getAuthHeaders() })
       .then(res => res.json())
       .then(data => {
         allItems = data.data || [];
@@ -199,7 +225,8 @@ waitForConfig().then(() => {
 
   function renderItems(items) {
     tableBody.innerHTML = items.map(item => {
-      const fileName = item.name.toLowerCase().replace(/\s/g, '');
+      // const fileName = item.name.toLowerCase().replace(/\s/g, '');
+      const fileName = toCamelCase(item.name);
 
       return `
         <div class="flex items-start justify-between border rounded-lg p-4 shadow bg-white">
@@ -231,16 +258,30 @@ waitForConfig().then(() => {
       });
     });
   }
+
   // Handle item deletion
   function deleteItem(id) {
+    console.log(removeItemEndpoint);
     fetch(removeItemEndpoint, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ id })
-    }).then(res => res.json())
-      .then(() => {
-        loadItems(); // Refresh list
-      });
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.text().then(text => {
+          throw new Error(`API Error (${res.status}): ${text}`);
+        });
+      }
+      return res.json();
+    })
+    .then(() => {
+      loadItems(); // Refresh list
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Failed to add item: " + err.message);
+    });
   }
 
   // Handle add item form
@@ -258,18 +299,29 @@ waitForConfig().then(() => {
 
     fetch(addItemEndpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(item)
     })
-      .then(res => res.json())
-      .then(() => {
-        form.reset();
-        form.classList.toggle('hidden');
-        tableBody.classList.toggle('hidden');
-        loadItems(); // Refresh list
-      });
+    .then(res => {
+      if (!res.ok) {
+        return res.text().then(text => {
+          throw new Error(`API Error (${res.status}): ${text}`);
+        });
+      }
+      return res.json();
+    })
+    .then(() => {
+      form.reset();
+      form.classList.toggle('hidden');
+      tableBody.classList.toggle('hidden');
+      loadItems(); // Refresh list
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Failed to add item: " + err.message);
+    });    
   });
 
   // Initial load
   loadItems();
-});
+}

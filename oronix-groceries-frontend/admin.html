@@ -11,11 +11,23 @@
   <body class="bg-[#f7fdff] min-h-screen flex flex-col">
     <!-- Navigation Bar -->
     <nav class="w-full bg-white px-6 py-4 shadow-md">
-      <div class="flex justify-start">
-        <a href="index.html" class="flex items-center space-x-2">
-          <img src="images/logo.png" alt="Logo" class="w-[160px] h-auto object-contain">
-        </a>
+      <div class="container mx-auto grid grid-cols-3 items-center">
+        
+        <!-- Logo -->
+        <div class="flex justify-start">
+          <a href="admin.html" class="flex items-center space-x-2">
+            <img src="images/logo.png" alt="Logo" class="w-[160px] h-auto object-contain">
+          </a>
+        </div>
+
+        <div id="logout">
+          <button id="logoutBtn">
+            Logout
+          </button>
+        </div>
       </div>
+      
+                
     </nav>
 
     <main class="flex-grow container max-w-7xl mx-auto px-6 pb-4 flex flex-col">
@@ -91,6 +103,7 @@
       &copy; 2025 Oronix Groceries. All rights reserved.
     </footer>
 
+    <script src="js/config.js"></script>
     <script type="module" src="js/admin.js"></script>
   </body>
 </html>
