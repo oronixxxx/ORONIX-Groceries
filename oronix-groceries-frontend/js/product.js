@@ -1,3 +1,5 @@
+import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
+import { toCamelCase } from './services/imageService.js';
 import { addToCart, getCartItems, updateCartItemQuantity } from './services/cartService.js';
 
 document.addEventListener('DOMContentLoaded', async () => { 
@@ -28,7 +30,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const name = item.name.toUpperCase();
-        const imageName = item.name.toLowerCase().replace(/\s/g, '');
+        //const imageName = item.name.toLowerCase().replace(/\s/g, '');
+        const imageName = toCamelCase(item.name);
         const price = Number(item.price).toFixed(2);
         const category = item.category;
         const description = item.description || "No description available.";
