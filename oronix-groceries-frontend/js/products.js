@@ -1,3 +1,6 @@
+import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
+import { toCamelCase } from './services/imageService.js';
+
 document.addEventListener("DOMContentLoaded", async () => {
   const productGrid = document.getElementById("product-grid");
   const pagination = document.getElementById("pagination");
@@ -139,7 +142,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         card.setAttribute("data-color", item.color.toLowerCase());
 
         const name = item.name[0].toUpperCase() + item.name.slice(1);
-        const imageName = item.name.toLowerCase().replace(/\s/g, '');
+        //const imageName = item.name.toLowerCase().replace(/\s/g, '');
+        const imageName = toCamelCase(item.name);
 
         card.innerHTML = `
           <a href="product.html?id=${item.id}">
