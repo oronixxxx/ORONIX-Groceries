@@ -1,12 +1,11 @@
+import {
+  ensureAuthenticated,
+  getAuthHeaders
+} from "./auth.js";
+
 let currentIndex = 0;
 let visibleItems = 4;
 let totalItems = 0;
-const { app, api } = window.config;
-
-const headers = {
-  "Content-Type": "application/json",
-  "Authorization": sessionStorage.getItem("tokenId")
-};
 
 document.addEventListener("DOMContentLoaded", async () => {
   // helper: if window.config isn't ready yet, wait for the 'configLoaded' event
@@ -18,23 +17,37 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Waiting for config to finish loading before calling the API
   await waitForConfig();
 
-  // If Cognito just redirected back here with id_token in the hash → grab it
-  const hash = window.location.hash.substring(1);
-  const urlParams = new URLSearchParams(hash);
-  if (urlParams.has('id_token')) {
-    const token = urlParams.get('id_token');
-    sessionStorage.setItem('tokenId', token);
-    // // remove hash from URL so it won't be processed again
-    // history.replaceState(null, '', window.location.pathname);
-  }
+  // // If Cognito just redirected back here with id_token in the hash → grab it
+  // const hash = window.location.hash.substring(1);
+  // const urlParams = new URLSearchParams(hash);
+  // if (urlParams.has('id_token')) {
+  //   console.log("URL Params has id_token");
 
-  // Now that token is saved (if it existed), we can safely read it
-  const token = sessionStorage.getItem('tokenId');
-  if (!token) {
-    // no token → force login
-    return window.location.href = app.homePageUrl;
-  }
+  //   const token = urlParams.get('id_token');
+  //   console.log("token:", token);
 
+  //   sessionStorage.setItem('tokenId', token);
+  //   console.log("Token saved to session storage (tokenId)");
+
+  //   // // remove hash from URL so it won't be processed again
+  //   // history.replaceState(null, '', window.location.pathname);
+  // }
+
+  // // Now that token is saved (if it existed), we can safely read it
+  // const token = sessionStorage.getItem('tokenId');
+  // console.log("Token from session storage (tokenId):", token);
+
+  // if (!token) {
+  //   // no token → force login
+  //   console.log("Failed to read the token from session storage (tokenId) -> redirect to homePage");
+  //   return window.location.href = window.config.app.homePageUrl;
+  // }
+
+  // Make sure the user is logged in & token hasn’t expired.
+  //   If not, this will redirect to Cognito Hosted UI.
+  ensureAuthenticated(window.config.cognito.loginUrl);
+
+  // `id_token` is present and fresh -> call checkUserRole API:
   await checkUserRole();
 
   const logoutBtn = document.getElementById("logoutBtn");
@@ -124,10 +137,11 @@ async function fetchAllCategories() {
 }
 
 async function checkUserRole() {
-  const checkUserRoleAPI = api.checkUserRole;
-  
-  console.log(headers);
   console.log("Checking user role.");
+  
+  const checkUserRoleAPI = window.config.api.checkUserRole;
+  const headers = getAuthHeaders();
+  console.log(headers);
 
   try {
     const response = await fetch(checkUserRoleAPI, {
@@ -144,12 +158,12 @@ async function checkUserRole() {
     console.log(responseBody.message , responseBody.data);
 
     if(responseBody.data.isAdmin){
-      return window.location.href = app.adminPageUrl;
+      return window.location.href = window.config.app.adminPageUrl;
     }
     return true;
 
   } catch (error) {
     console.error("Error checking user role:", error);
-    return window.location.href = app.errorPageUrl;
+    return window.location.href = window.config.app.errorPageUrl;
   }
 }
