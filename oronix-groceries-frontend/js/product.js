@@ -2,22 +2,27 @@ import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
 import { toCamelCase } from './services/imageService.js';
 import { addToCart, getCartItems, updateCartItemQuantity } from './services/cartService.js';
 
+
+// helper: if window.config isn't ready yet, wait for the 'configLoaded' event
+function waitForConfig() {
+  return window.config
+  ? Promise.resolve()
+  : new Promise(resolve => window.addEventListener('configLoaded', resolve));
+}
+
 document.addEventListener('DOMContentLoaded', async () => { 
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
     const container = document.getElementById('product-details');
     //const cartItems = await getCartItems();
 
-    // helper: if window.config isn't ready yet, wait for the 'configLoaded' event
-    function waitForConfig() {
-        return window.config
-        ? Promise.resolve()
-        : new Promise(resolve => window.addEventListener('configLoaded', resolve));
-    }
-    // Waiting for config to finish loading before calling the API
+    // Load configuration first, then enforce authentication and initialize the product page
     await waitForConfig();
 
     try {
+        // Ensure user is authenticated and token is valid before any further actions
+        ensureAuthenticated(window.config.cognito.loginUrl);
+
         const item = await fetchItemDetails(Number(productId));
 
         // const res = await fetch("data/oronix_items.json");
