@@ -312,15 +312,23 @@ function initAdminPage() {
     })
     .then(() => {
       form.reset();
-      form.classList.toggle('hidden');
-      tableBody.classList.toggle('hidden');
-      loadItems(); // Refresh list
+      form.classList.add('hidden');
+      tableBody.classList.remove('hidden');
+
+      const searchInput = document.getElementById('search-input');
+      if (searchInput) searchInput.classList.remove('hidden');
+
+      const toggleBtn = document.getElementById('toggle-add-form');
+      toggleBtn.textContent = 'Add';
+
+      loadItems();
     })
     .catch(err => {
       console.error(err);
       alert("Failed to add item: " + err.message);
     });    
   });
+
 
   // Initial load
   loadItems();
