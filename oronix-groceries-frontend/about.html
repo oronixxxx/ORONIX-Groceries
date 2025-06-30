@@ -29,12 +29,17 @@
                     <li><a href="about.html" class="pb-1 border-b-2 border-blue-400 text-blue-400 hover:text-blue-200 hover:border-blue-200">About</a></li>
                 </ul>
             </div>
-            <!-- Cart Icon -->
+            <!-- Cart & Logout Buttons -->
             <div class="flex justify-end">
+                <!-- Cart Button -->
                 <button aria-label="Cart" onclick="location.href='cart.html'">
                     <svg class="w-7 h-7 text-gray-900 hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 2l1 6h10l1-6M4 8h16l-1.5 14H5.5L4 8z"/>
                     </svg>
+                </button>
+                <!-- Logout Button -->
+                <button id="logoutBtn" style="margin-left: 20px;">
+                    Logout
                 </button>
             </div>
         </div>
@@ -102,5 +107,38 @@
     <footer class="bg-blue-400 bg-opacity-20 items-center text-center text-gray-600 text-sm font-semibold border-t w-full h-10 bottom-0 p-3 left-0 ">
         &copy; 2025 Oronix Groceries. All rights reserved.
     </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script type="module">
+        import { ensureAuthenticated } from './js/auth.js';
+        
+        // Helper: wait for config to be available before proceeding
+        function waitForConfig() {
+            return window.config
+            ? Promise.resolve()
+            : new Promise(resolve => window.addEventListener('configLoaded', resolve));
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load configuration first, then enforce authentication and initialize the cart page
+            await waitForConfig();
+
+            // Destructure the needed URLs from global config
+            const { cognito, app } = window.config;
+
+            // Ensure user is authenticated and token is valid before any further actions
+            ensureAuthenticated(cognito.loginUrl);
+
+            // Handle click on "Logout" button -> redirect to HomePage (or Cognito loginUrl)
+            const logoutBtn = document.getElementById("logoutBtn");
+            logoutBtn.addEventListener("click", function (event) {
+                event.preventDefault();
+                sessionStorage.clear();
+                window.location.href = app.homePageUrl; // (or cognito.loginUrl)
+            });
+            
+        });     
+    </script>
 </body>
 </html>
