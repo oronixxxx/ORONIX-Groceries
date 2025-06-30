@@ -72,57 +72,56 @@
 
         <!-- Scripts -->
         <script src="js/config.js"></script>
-        <script>
-            window.addEventListener('configLoaded', () => {
+        <script type="module">
+            import { ensureAuthenticated } from './js/auth.js';
+            
+            // Helper: wait for config to be available before proceeding
+            function waitForConfig() {
+                return window.config
+                ? Promise.resolve()
+                : new Promise(resolve => window.addEventListener('configLoaded', resolve));
+            }
+            
+            document.addEventListener('DOMContentLoaded', async () => {
+                // Load configuration first, then enforce authentication and initialize the cart page
+                await waitForConfig();
+                
                 // Destructure the needed URLs from global config
                 const { cognito, app } = window.config;
-
+                
+                // Ensure user is authenticated and token is valid before any further actions
+                ensureAuthenticated(cognito.loginUrl);
+                
                 // Handle click on "Log in" button -> redirect to Cognito Hosted UI
                 document.getElementById("loginBtn").addEventListener("click", event => {
                     event.preventDefault();
                     window.location.href = cognito.loginUrl;
                 });
-
-                // After redirect back from Cognito, extract the id_token from URL hash
-                const hash = window.location.hash.substring(1);
-                const urlParams = new URLSearchParams(hash);
-                if (urlParams.has("id_token")) {
-                    const token = urlParams.get("id_token");
-                    // Save the JWT in sessionStorage for API calls
-                    sessionStorage.setItem("tokenId", token);
-                    // Redirect to main app page as configured
-                    window.location.href = app.indexPageUrl || "index.html"; // fallback
-                }
-            });
-            
-            // const checkParameters = () => {
-            //     const urlParams = new URLSearchParams(window.location.hash.substring(1));
-            //     if (urlParams.size !== 0) {
-            //         sessionStorage.setItem("tokenId", urlParams.get("id_token"));
-            //         window.location.href = config.indexPageUrl || "index.html"; // fallback
-            //     }
-            // };
-            
-            // document.addEventListener("DOMContentLoaded", async () => {
-            //     // helper: if window.config isn't ready yet, wait for the 'configLoaded' event
-            //     function waitForConfig() {
-            //         return window.config
-            //         ? Promise.resolve()
-            //         : new Promise(resolve => window.addEventListener('configLoaded', resolve));
-            //     }
-            //     // Waiting for config to finish loading before calling the API
-            //     await waitForConfig();
                 
-            //     // Handle login button
+            });
+        
+            // window.addEventListener('configLoaded', () => {
+            //     // Destructure the needed URLs from global config
+            //     const { cognito, app } = window.config;
+
+            //     // Handle click on "Log in" button -> redirect to Cognito Hosted UI
             //     document.getElementById("loginBtn").addEventListener("click", event => {
-            //     event.preventDefault();
-            //     window.location.href = config.loginUrl;
+            //         event.preventDefault();
+            //         window.location.href = cognito.loginUrl;
             //     });
 
-            //     // Handle token redirect if needed
-            //     checkParameters();
-
+            //     // After redirect back from Cognito, extract the id_token from URL hash
+            //     const hash = window.location.hash.substring(1);
+            //     const urlParams = new URLSearchParams(hash);
+            //     if (urlParams.has("id_token")) {
+            //         const token = urlParams.get("id_token");
+            //         // Save the JWT in sessionStorage for API calls
+            //         sessionStorage.setItem("tokenId", token);
+            //         // Redirect to main app page as configured
+            //         window.location.href = app.indexPageUrl || "index.html"; // fallback
+            //     }
             // });
+            
         </script>
     </body>
 </html>
