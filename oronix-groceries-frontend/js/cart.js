@@ -2,16 +2,30 @@ import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
 import { addToCart, removeFromCart, getCartItems, updateCartItemQuantity } from './services/cartService.js';
 import { toCamelCase } from './services/imageService.js'
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const cartContainer = document.getElementById('cart-items');
+// helper: if window.config isn't ready yet, wait for the 'configLoaded' event
+function waitForConfig() {
+    return window.config
+    ? Promise.resolve()
+    : new Promise(resolve => window.addEventListener('configLoaded', resolve));
+}
 
+document.addEventListener('DOMContentLoaded', async () => {
+    // Load configuration first, then enforce authentication and initialize the cart page
+    await waitForConfig();
+    
     try {
+        // Ensure user is authenticated and token is valid before any further actions
+        ensureAuthenticated(window.config.cognito.loginUrl);
+
+        // After authentication check, initialize the page
         let cartItems = await getCartItems();
         renderCartItems(cartItems);
         updateTotalPrice(cartItems);
 
     } catch (error) {
         console.error('Error loading cart:', error);
+
+        const cartContainer = document.getElementById('cart-items');
         cartContainer.innerHTML = '<p class="text-red-500">Error loading cart items.</p>';
     }
 });
@@ -29,10 +43,12 @@ function renderCartItems(items) {
         const itemElement = document.createElement('div');
         itemElement.className = 'flex items-center justify-between p-4 border-b';
 
+        const imageName = toCamelCase(item.name);
+
         itemElement.innerHTML = `
             <div class="flex flex-row items-center justify-between w-70 gap-20">
                 <div class="flex flex-col items-center">
-                    <img src="images/items/${item.image}.png" alt="${item.name}" class="flex justify-center w-32 h-32 object-cover rounded-lg mr-4">
+                    <img src="images/items/${imageName}.png" alt="${item.name}" class="flex justify-center w-32 h-32 object-cover rounded-lg mr-4">
                 </div>
                 <div class="flex flex-col items-center w-40 gap-4">
                     <h3 class="text-4xl font-semibold flex items-center">${item.name}</h3>
