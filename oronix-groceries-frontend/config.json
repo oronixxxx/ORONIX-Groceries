@@ -5,12 +5,12 @@
     "fetchAllCategories": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/categories",
     "fetchAllColors": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/colors",
     "cart": {
-      "fetchCartItems":          "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart",
-      "addItemToCart":          "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart/add",
-      "updateCartItemQuantity":       "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart/update",
-      "deleteItemFromCart":       "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart/remove"
+      "fetchCartItems": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart",
+      "addItemToCart": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart/add",
+      "updateCartItemQuantity": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart/update",
+      "deleteItemFromCart": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/cart/remove"
     },
-    "placeOrder":    "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/order",
+    "placeOrder": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/order",
     
     "checkUserRole": "https://njbrrbrikd.execute-api.us-east-1.amazonaws.com/dev/users",
 
