@@ -36,7 +36,7 @@ def lambda_handler(event, context):
         if not cart_items:
             return response_with_cors(400, "Cart is empty. Cannot place order.")
 
-        # Use onlu item ids
+        # Use only item ids
         item_ids = [int(item['itemId']) for item in convert_decimals(cart_items) if 'itemId' in item]
 
         # Scan all orders to find the highest orderId
