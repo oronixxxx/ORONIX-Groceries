@@ -1,6 +1,13 @@
 import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
 import { toCamelCase } from './services/imageService.js';
 
+// helper: if window.config isn't ready yet, wait for the 'configLoaded' event
+function waitForConfig() {
+  return window.config
+  ? Promise.resolve()
+  : new Promise(resolve => window.addEventListener('configLoaded', resolve));
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const productGrid = document.getElementById("product-grid");
   const pagination = document.getElementById("pagination");
@@ -15,16 +22,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   let selectedColors = [];
   let searchQuery = "";
 
-  // helper: if window.config isn't ready yet, wait for the 'configLoaded' event
-  function waitForConfig() {
-    return window.config
-      ? Promise.resolve()
-      : new Promise(resolve => window.addEventListener('configLoaded', resolve));
-  }
-  // Waiting for config to finish loading before calling the API
+  // Load configuration first, then enforce authentication and initialize the products page
   await waitForConfig();
 
   try {
+    // Ensure user is authenticated and token is valid before any further actions
+    ensureAuthenticated(window.config.cognito.loginUrl);
+
     // const [itemsRes, categoriesRes] = await Promise.all([
     //   fetch("data/oronix_items.json"),
     //   fetch("data/oronix_categories.json")
