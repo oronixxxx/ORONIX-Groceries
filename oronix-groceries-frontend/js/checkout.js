@@ -1,14 +1,34 @@
+// checkout.js
+
 import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
 import { getCartItems, clearCart } from './services/cartService.js';
 import { toCamelCase } from './services/imageService.js'
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadCartItems();
+// helper: if window.config isn't ready yet, wait for the 'configLoaded' event
+function waitForConfig() {
+    return window.config
+    ? Promise.resolve()
+    : new Promise(resolve => window.addEventListener('configLoaded', resolve));
+}
 
-    document.getElementById('checkout-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await placeOrder(); // mock order now, real later
-    });
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Load configuration first, then enforce authentication and initialize the checkout page
+        await waitForConfig();
+        // Ensure user is authenticated and token is valid before any further actions
+        ensureAuthenticated(window.config.cognito.loginUrl);
+
+        await loadCartItems();
+        
+        document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await placeOrder();
+        });
+        
+    } catch (error) {
+        console.error("Checkout init failed:", error);
+    }
+    
 });
 
 async function loadCartItems() {
@@ -37,9 +57,8 @@ async function loadCartItems() {
         total += itemTotal;
         
         // Build image path based on item name (you can adjust this logic as needed)
-        const imageName = item.name.toLowerCase().replace(/\s/g, '');
-
-
+        //const imageName = item.name.toLowerCase().replace(/\s/g, '');
+        const imageName = toCamelCase(item.name);
         const imagePath = `images/items/${imageName}.png`;
 
         container.innerHTML += `
@@ -70,17 +89,16 @@ async function placeOrder() {
         items: await getCartItems()
     };
 
-    // Here should be the logic to aws
     console.log('Placing order...', order);
     
-    // --- START aws integration logic ---
+    // Construct the endpoint URL
     const placeOrderAPI = window.config.api.placeOrder;
-    const headers = {
-        "Content-Type": "application/json",
-        "Authorization": sessionStorage.getItem("tokenId")
-    };
+    // Retrieve authentication headers for API calls.
+    const headers = getAuthHeaders();
+
     let body = {
-        "orderItems": await getCartItems()
+        // "orderItems": await getCartItems()
+        "order": order
     };
 
     try {
@@ -92,25 +110,20 @@ async function placeOrder() {
         });
 
         if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const responseBody = await response.json();
         console.log("Order Message:", responseBody.message);
         console.log("Order Details:", responseBody.data);
         
+        alert('Order placed successfully!');
         clearCart();
-        window.location.href = 'thankyou.html';
-        //window.location.href = window.config.app.thankyouPageUrl;
+        window.location.href = window.config.app.thankyouPageUrl || 'thankyou.html'; // 'thankyou.html'
 
         return true;
     } catch (error) {
-        console.error("Error fetching Item Details:", error);
+        console.error("Error Details:", error);
         return false;
     }
-    // --- END aws integration logic ---
-
-    // alert('Order placed successfully!\n(Stored in console for mock)');
-    //clearCart();
-    //window.location.href = 'thankyou.html';
 }
