@@ -26,8 +26,6 @@ def lambda_handler(event, context):
         # Extract item id
         item_id = None
         if event['httpMethod'] == 'DELETE':
-            item_id = event.get('queryStringParameters', {}).get('itemId')
-        if not item_id:
             body = json.loads(event.get('body', '{}'))
             item_id = body.get('itemId')
 
