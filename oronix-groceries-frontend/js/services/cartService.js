@@ -43,7 +43,7 @@ export const addToCart = async (product, quantity = 1) => {
   
   // saveCart(cartItems);
   
-  const res = await addItemToCart(product.id);
+  const res = await addItemToCart(Number(product.id));
   if(res){
     console.log(`Added product ${product.name} to cart`);
   }
@@ -61,8 +61,8 @@ export const removeFromCart = async(itemId) => {
   // cartItems = cartItems.filter(i => i.id !== itemId);
   
   // saveCart(cartItems);
-  
-  const res = await deleteItemFromCart(itemId);
+
+  const res = await deleteItemFromCart(Number(itemId));
   if (res) {
     console.log(`Item with ID ${itemId} removed from cart.`);
   }
@@ -121,11 +121,11 @@ export const updateCartItemQuantity = async(itemId, quantity) => {
   if (quantity <= 0) {
     console.warn(`Quantity for item ${itemId} is ${quantity} → removing from cart.`);
     // If quantity is 0 or less, remove the item from the cart
-    return removeFromCart(itemId);
+    return removeFromCart(Number(itemId));
   }
 
   // Construct the endpoint URL for updating cart item quantity.
-  const updateCartItemQuantityAPI = window.config.api.updateCartItemQuantity;
+  const updateCartItemQuantityAPI = window.config.api.cart.updateCartItemQuantity;
   console.log(`Updating cart item ${itemId} to quantity ${quantity}`);
 
   try {
@@ -133,7 +133,10 @@ export const updateCartItemQuantity = async(itemId, quantity) => {
     const response = await fetch(updateCartItemQuantityAPI, {
       method: 'PUT',
       headers,
-      body: JSON.stringify({ itemId, quantity })
+      body: JSON.stringify({ 
+        "itemId": Number(itemId), 
+        "quantity": Number(quantity)
+      })
     });
 
     // Throw an error if the response status is not OK (2xx).
@@ -161,7 +164,7 @@ export const clearCart = () => {
 
 async function fetchCartItems() {
   // Construct the endpoint URL
-  const fetchCartItemsAPI = window.config.api.fetchCartItems;
+  const fetchCartItemsAPI = window.config.api.cart.fetchCartItems;
   // Retrieve authentication headers for API calls.
   const headers = getAuthHeaders();
 
@@ -171,7 +174,6 @@ async function fetchCartItems() {
     const response = await fetch(fetchCartItemsAPI, {
       method: "GET",
       headers,
-      mode: "cors",
     });
 
     if (!response.ok) {
@@ -199,7 +201,7 @@ async function addItemToCart(itemId) {
   }
 
   // Construct the endpoint URL
-  const addItemToCartAPI = window.config.api.addItemToCart;
+  const addItemToCartAPI = window.config.api.cart.addItemToCart;
   // Retrieve authentication headers for API calls.
   const headers = getAuthHeaders();
 
@@ -209,7 +211,6 @@ async function addItemToCart(itemId) {
     const response = await fetch(addItemToCartAPI, {
       method: "POST",
       headers,
-      mode: "cors",
       body: JSON.stringify({ itemId })   // body = { "itemId": itemId };
     });
 
@@ -237,7 +238,7 @@ async function deleteItemFromCart(itemId) {
 
   console.log(`Remove Item ${itemId} from cart.`);
   // Construct the endpoint URL
-  const deleteItemFromCartAPI = window.config.api.deleteItemFromCart;
+  const deleteItemFromCartAPI = window.config.api.cart.deleteItemFromCart;
   // Retrieve authentication headers for API calls.
   const headers = getAuthHeaders();
 
