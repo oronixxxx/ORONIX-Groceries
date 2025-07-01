@@ -4,7 +4,7 @@
   "Parameters": {
     "EnvName": {
       "Type": "String",
-      "Description": "Environment name like 'dev', 'prod'"
+      "Description": "Environment name (e.g. dev, prod)"
     },
     "AssetsBucketName": {
       "Type": "String",
@@ -12,7 +12,7 @@
     },
     "WebsiteBucketName": {
       "Type": "String",
-      "Description": "Name of the S3 bucket for frontend static website"
+      "Description": "Name of the S3 bucket for the website frontend files"
     },
     "WebsiteBucketTemplateURL": {
       "Type": "String",
@@ -26,13 +26,21 @@
       "Type": "String",
       "Description": "Comma-separated list of URLs for redirect after login"
     },
-    "PostLogOutURLs": {
+    "PostLogoutURLs": {
       "Type": "String",
       "Description": "Comma-separated list of URLs for redirect after logout"
     },
     "PostConfirmationLambdaS3Key": {
       "Type": "String",
       "Description": "Key of the Lambda file in the assets bucket"
+    },
+    "CognitoAdminGroupName": {
+      "Type": "String",
+      "Description": "Name of the Cognito User Pool admin group"
+    },
+    "CognitoUserGroupName": {
+      "Type": "String",
+      "Description": "Name of the Cognito User Pool regular users group"
     },
     "LambdaCodeS3Key": {
       "Type": "String",
@@ -48,7 +56,7 @@
     },
     "StageName": {
       "Type": "String",
-      "Description": "Stage name for API Gateway (e.g., 'Prod')"
+      "Description": "Stage name for API Gateway (e.g., 'dev', 'prod')"
     },
     "DynamoDBTablesTemplateURL": {
       "Type": "String",
@@ -72,8 +80,18 @@
         }
       }
     },
+    "DynamoDBTablesStack": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": { "Ref": "DynamoDBTablesTemplateURL" },
+        "Parameters": {
+          "EnvName": { "Ref": "EnvName" }
+        }
+      }
+    },    
     "CognitoStack": {
       "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["DynamoDBTablesStack"],
       "Properties": {
         "TemplateURL": { 
           "Ref": "CognitoTemplateURL"
@@ -83,14 +101,19 @@
           "AssetsBucketName": { "Ref": "AssetsBucketName" },
           "PostConfirmationLambdaS3Key": { "Ref": "PostConfirmationLambdaS3Key" },
           "PostLoginCallbackURLs": { "Ref": "PostLoginCallbackURLs" },
-          "PostLogOutURLs": { "Ref": "PostLogOutURLs" },
+          "PostLogoutURLs": { "Ref": "PostLogoutURLs" },
+          "CognitoAdminGroupName": { "Ref": "CognitoAdminGroupName" },
+          "CognitoUserGroupName":  { "Ref": "CognitoUserGroupName" },
+          "DynamoDBTableNameUsers": {
+            "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableNameUsers"]
+          },
           "LabRoleArn": { "Ref": "LabRoleArn" }
         }
       }
     },
     "LambdaFunctionsStack": {
       "Type": "AWS::CloudFormation::Stack",
-      "DependsOn": ["CognitoStack", "DynamoDBTablesStack" ],
+      "DependsOn": ["CognitoStack", "DynamoDBTablesStack"],
       "Properties": {
         "TemplateURL": { "Ref": "LambdaFunctionsTemplateURL" },
         "Parameters": {
@@ -109,6 +132,21 @@
           "DynamoDBTableUsersName": {
             "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableUsersName"]
           },
+          "DynamoDBTableCartName": {
+            "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableCartName"]
+          },
+          "DynamoDBTableCategoriesName": {
+            "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableCategoriesName"]
+          },
+          "DynamoDBTableColorsName": {
+            "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableColorsName"]
+          },
+          "DynamoDBTableItemsName": {
+            "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableItemsName"]
+          },
+          "DynamoDBTableOrdersName": {
+            "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableOrdersName"]
+          },
           "LabRoleArn": { "Ref": "LabRoleArn" }
         }
       }
@@ -126,32 +164,53 @@
           "CognitoUserPoolArn": {
             "Fn::GetAtt": ["CognitoStack", "Outputs.CognitoUserPoolArn"]
           },
-          "ListUsersLambdaFunctionArn": {
-            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.ListUsersLambdaFunctionArn"]
+          "CheckUserRoleLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.CheckUserRoleLambdaFunctionArn"]
           },
-          "GetUserDetailsLambdaFunctionArn": {
-            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.GetUserDetailsLambdaFunctionArn"]
+          "FetchAllItemsLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.FetchAllItemsLambdaFunctionArn"]
+          },
+          "FetchItemDetailsLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.FetchItemDetailsLambdaFunctionArn"]
+          },
+          "FetchAllCategoriesLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.FetchAllCategoriesLambdaFunctionArn"]
+          },
+          "FetchAllColorsLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.FetchAllColorsLambdaFunctionArn"]
+          },
+          "FetchCartItemsLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.FetchCartItemsLambdaFunctionArn"]
+          },
+          "AddItemToCartLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.AddItemToCartLambdaFunctionArn"]
+          },
+          "UpdateCartItemQuantityLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.UpdateCartItemQuantityLambdaFunctionArn"]
+          },
+          "DeleteItemFromCartLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.DeleteItemFromCartLambdaFunctionArn"]
+          },
+          "PlaceOrderLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.PlaceOrderLambdaFunctionArn"]
+          },
+          "AddItemToInventoryLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.AddItemToInventoryLambdaFunctionArn"]
+          },
+          "DeleteFromInventoryLambdaFunctionArn": {
+            "Fn::GetAtt": ["LambdaFunctionsStack", "Outputs.DeleteFromInventoryLambdaFunctionArn"]
           },
           "LabRoleArn": { "Ref": "LabRoleArn" }
-        }
-      }
-    },
-    "DynamoDBTablesStack": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "TemplateURL": { "Ref": "DynamoDBTablesTemplateURL" },
-        "Parameters": {
-          "EnvName": { "Ref": "EnvName" }
         }
       }
     }
   },
   "Outputs": {
-    "WebsiteBucketStackOutput": {
+    "WebsiteBucketStackName": {
       "Description": "Nested buckets stack name",
       "Value": { "Ref": "WebsiteBucketStack" }
     },
-    "CognitoStackOutput": {
+    "CognitoStackName": {
       "Description": "Nested Cognito stack name",
       "Value": { "Ref": "CognitoStack" }
     },
