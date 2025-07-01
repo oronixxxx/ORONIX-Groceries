@@ -1,4 +1,7 @@
 import json
+import os
+
+ADMIN_GROUP_NAME = os.environ['ADMIN_GROUP_NAME']
 
 def response_with_cors(status_code, message, body=None):
     headers = {
@@ -17,7 +20,7 @@ def lambda_handler(event, context):
         claims = event.get("requestContext", {}).get("authorizer", {}).get("claims", {})
         groups = claims.get("cognito:groups", "")
 
-        is_admin = "admins" in groups
+        is_admin = ADMIN_GROUP_NAME in groups
 
         return response_with_cors(200, "role check successful", {
             "isAdmin": is_admin
