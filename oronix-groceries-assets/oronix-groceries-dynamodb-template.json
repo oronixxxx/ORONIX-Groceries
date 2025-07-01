@@ -1,14 +1,120 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "CloudFormation template - Oronix Groceries project",
+  "Description": "CloudFormation template - DynamoDB tables for Oronix Groceries project",
   "Parameters": {
     "EnvName": {
       "Type": "String",
-      "Description": "Environment name like 'dev', 'prod'"
+      "Description": "Environment name (e.g. dev, prod)"
     }
   },
   "Resources": {
+    "DynamoDBTableUsers": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Fn::Sub": "Users${EnvName}" },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          { "AttributeName": "userId", "AttributeType": "S" }
+        ],
+        "KeySchema": [
+          { "AttributeName": "userId", "KeyType": "HASH" }
+        ]
+      }
+    },
+    "DynamoDBTableCart": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Fn::Sub": "Cart${EnvName}" },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          { "AttributeName": "userId", "AttributeType": "S" },
+          { "AttributeName": "itemId", "AttributeType": "N" }
+        ],
+        "KeySchema": [
+          { "AttributeName": "userId", "KeyType": "HASH" },
+          { "AttributeName": "itemId", "KeyType": "RANGE" }
+        ]
+      }
+    },
+    "DynamoDBTableCategories": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Fn::Sub": "Categories${EnvName}" },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          { "AttributeName": "categoryId", "AttributeType": "N" }
+        ],
+        "KeySchema": [
+          { "AttributeName": "categoryId", "KeyType": "RANGE" }
+        ]
+      }
+    },
+    "DynamoDBTableColors": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Fn::Sub": "Colors${EnvName}" },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          { "AttributeName": "colorId", "AttributeType": "N" }
+        ],
+        "KeySchema": [
+          { "AttributeName": "colorId", "KeyType": "RANGE" }
+        ]
+      }
+    },
+    "DynamoDBTableItems": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Fn::Sub": "Items${EnvName}" },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          { "AttributeName": "id", "AttributeType": "N" }
+        ],
+        "KeySchema": [
+          { "AttributeName": "id", "KeyType": "RANGE" }
+        ]
+      }
+    },
+    "DynamoDBTableOrders": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Fn::Sub": "Orders${EnvName}" },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          { "AttributeName": "userId", "AttributeType": "S" },
+          { "AttributeName": "orderId", "AttributeType": "N" }
+        ],
+        "KeySchema": [
+          { "AttributeName": "userId", "KeyType": "HASH" },
+          { "AttributeName": "orderId", "KeyType": "RANGE" }
+        ]
+      }
+    }
   },
   "Outputs": {
+    "DynamoDBTableUsersName": {
+      "Description": "Name of the Users table",
+      "Value": { "Ref": "DynamoDBTableUsers" }
+    },
+    "DynamoDBTableCartName": {
+      "Description": "Name of the Cart table",
+      "Value": { "Ref": "DynamoDBTableCart" }
+    },
+    "DynamoDBTableCategoriesName": {
+      "Description": "Name of the Categories table",
+      "Value": { "Ref": "DynamoDBTableCategories" }
+    },
+    "DynamoDBTableColorsName": {
+      "Description": "Name of the Colors table",
+      "Value": { "Ref": "DynamoDBTableColors" }
+    },
+    "DynamoDBTableItemsName": {
+      "Description": "Name of the Items table",
+      "Value": { "Ref": "DynamoDBTableItems" }
+    },
+    "DynamoDBTableOrdersName": {
+      "Description": "Name of the Orders table",
+      "Value": { "Ref": "DynamoDBTableOrders" }
+    }
   }
 }
