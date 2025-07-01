@@ -1,14 +1,161 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "CloudFormation template - Oronix Groceries project",
+  "Description": "CloudFormation template (nested) - Cognito User Pool with groups and post-confirmation trigger for Oronix Groceries",
   "Parameters": {
     "EnvName": {
       "Type": "String",
-      "Description": "Environment name like 'dev', 'prod'"
+      "Description": "Environment name (e.g. dev, prod)"
+    },
+    "AssetsBucketName": {
+      "Type": "String",
+      "Description": "S3 bucket name where Lambda function is stored"
+    },
+    "PostConfirmationLambdaS3Key": {
+      "Type": "String",
+      "Description": "S3 key of the Lambda function file inside the assets bucket"
+    },
+    "PostLoginCallbackURLs": {
+      "Type": "String",
+      "Description": "Comma-separated list of URLs to redirect users to after successful login (e.g., index page)" 
+    },
+    "PostLogoutURLs": {
+      "Type": "String",
+      "Description": "Comma-separated list of URLs to redirect users to after logout"
+    },
+    "CognitoAdminGroupName": {
+      "Type": "String",
+      "Description": "Name of the Cognito User Pool admin group"
+    },
+    "CognitoUserGroupName": {
+      "Type": "String",
+      "Description": "Name of the Cognito User Pool regular users group"
+    },
+    "DynamoDBTableNameUsers": {
+      "Type": "String",
+      "Description": "Name of the DynamoDB Users table from the nested DynamoDB stack"
+    },
+    "LabRoleArn": {
+      "Type": "String",
+      "Description": "IAM role ARN with permissions for Lambda"
     }
   },
   "Resources": {
+    "CognitoUserPool": {
+      "Type": "AWS::Cognito::UserPool",
+      "Properties": {
+        "UserPoolName": {
+          "Fn::Sub": "Oronix-Groceries-User-Pool${EnvName}"
+        },
+        "UsernameAttributes": [ "email" ],
+        "AutoVerifiedAttributes": [ "email" ],
+        "Schema": [
+          { "Name": "email", "Required": true, "Mutable": true, "AttributeDataType": "String" },
+          { "Name": "given_name", "Required": true, "Mutable": true, "AttributeDataType": "String" },
+          { "Name": "family_name", "Required": true, "Mutable": true, "AttributeDataType": "String" }
+        ],
+        "LambdaConfig": {
+          "PostConfirmation": { "Fn::GetAtt": [ "CognitoPostConfirmationTrigger", "Arn" ] }
+        }
+      }
+    },
+    "CognitoUserPoolDomain": {
+      "Type": "AWS::Cognito::UserPoolDomain",
+      "Properties": {
+        "Domain": { "Fn::Sub": "oronix-groceries${EnvName}" },
+        "UserPoolId": { "Ref": "CognitoUserPool" }
+      }
+    },
+    "CognitoUserPoolClient": {
+      "Type": "AWS::Cognito::UserPoolClient",
+      "Properties": {
+        "ClientName": { "Fn::Sub": "Oronix-Groceries-Client${EnvName}" },
+        "UserPoolId": { "Ref": "CognitoUserPool" },
+        "GenerateSecret": false,
+        "SupportedIdentityProviders": [ "COGNITO" ],
+        "CallbackURLs": [ { "Ref": "PostLoginCallbackURLs" } ],
+        "LogoutURLs": [ { "Ref": "PostLogoutURLs" } ],
+        "AllowedOAuthFlowsUserPoolClient": true,
+        "AllowedOAuthFlows": [ "code", "implicit" ],
+        "AllowedOAuthScopes": [ "email", "openid", "profile" ],
+        "ExplicitAuthFlows": [ "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH" ]
+      }
+    },
+    "AdminsGroup": {
+      "Type": "AWS::Cognito::UserPoolGroup",
+      "Properties": {
+        "GroupName": { "Ref": "CognitoAdminGroupName" },
+        "Description": "Group for administrators with elevated privileges.",
+        "UserPoolId": { "Ref": "CognitoUserPool" },
+        "RoleArn": { "Ref": "LabRoleArn" }
+      }
+    },
+    "UsersGroup": {
+      "Type": "AWS::Cognito::UserPoolGroup",
+      "Properties": {
+        "GroupName": { "Ref": "CognitoUserGroupName" },
+        "Description": "Group for regular users with basic access.",
+        "UserPoolId": { "Ref": "CognitoUserPool" },
+        "RoleArn": { "Ref": "LabRoleArn" }
+      }
+    },
+    "CognitoPostConfirmationTrigger": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "CognitoPostConfirmationTrigger${EnvName}" },
+        "Handler": "CognitoPostConfirmationTrigger.lambda_handler",
+        "Runtime": "python3.13",
+        "Role": { "Ref": "LabRoleArn" },
+        "Code": {
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "PostConfirmationLambdaS3Key" }
+        },
+        "Environment": {
+          "Variables": {
+            "USERS_TABLE_NAME": { "Ref": "DynamoDBTableNameUsers" },
+            "USER_GROUP_NAME":   { "Ref": "CognitoUserGroupName" }
+          }
+        },
+        "Timeout": 10,
+        "MemorySize": 128
+      }
+    },
+    "LambdaPermissionCognitoPostConfirmationTrigger": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Fn::GetAtt": [ "CognitoPostConfirmationTrigger", "Arn" ] },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "cognito-idp.amazonaws.com",
+        "SourceArn": { "Fn::Sub": "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPool}" }
+      }
+    }
   },
   "Outputs": {
+    "CognitoUserPoolId": {
+      "Description": "ID of the Cognito User Pool",
+      "Value": { "Ref": "CognitoUserPool" }
+    },
+    "CognitoUserPoolArn": {
+      "Description": "ARN of the Cognito User Pool",
+      "Value": { "Fn::GetAtt": [ "CognitoUserPool", "Arn" ] },
+      "Export": { "Name": { "Fn::Sub": "CognitoUserPoolArn${EnvName}" } }
+    },
+    "CognitoUserPoolDomainPrefix": {
+      "Description": "Prefix of the Cognito Hosted UI domain",
+      "Value": { "Fn::Sub": "oronix-groceries${EnvName}" }
+    },
+    "CognitoUserPoolClientId": {
+      "Description": "ID of the Cognito App Client",
+      "Value": { "Ref": "CognitoUserPoolClient" }
+    },
+    "AdminGroupName": {
+      "Description": "Name of the Admins group",
+      "Value": { "Ref": "AdminsGroup" },
+      "Export": { "Name": { "Fn::Sub": "AdminGroupName${EnvName}" } }
+    },
+    "UserGroupName": {
+      "Description": "Name of the Users group",
+      "Value": { "Ref": "UsersGroup" },
+      "Export": { "Name": { "Fn::Sub": "UserGroupName${EnvName}" } }
+    }
   }
 }
