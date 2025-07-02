@@ -18,8 +18,8 @@ def convert_decimals(obj):
 
 # Initialize DynamoDB connection
 dynamodb = boto3.resource('dynamodb')
-orders_table = dynamodb.Table(os.environ['ORDERS_TABLE'])
-cart_table = dynamodb.Table(os.environ['CART_TABLE'])
+orders_table = dynamodb.Table(os.environ['ORDERS_TABLE_NAME'])
+cart_table = dynamodb.Table(os.environ['CART_TABLE_NAME'])
 
 def lambda_handler(event, context):
     try:

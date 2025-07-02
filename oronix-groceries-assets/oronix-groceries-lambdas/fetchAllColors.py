@@ -15,7 +15,7 @@ def convert_decimals(obj):
 
 # Initialize DynamoDB connection
 dynamodb = boto3.resource('dynamodb')
-colors_table = dynamodb.Table(os.environ['COLORS_TABLE'])
+colors_table = dynamodb.Table(os.environ['COLORS_TABLE_NAME'])
 
 def lambda_handler(event, context):
     try:

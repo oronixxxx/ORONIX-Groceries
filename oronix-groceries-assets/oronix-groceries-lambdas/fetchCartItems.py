@@ -16,8 +16,8 @@ def convert_decimals(obj):
 
 # Initialize DynamoDB connection
 dynamodb = boto3.resource('dynamodb')
-cart_table = dynamodb.Table(os.environ['CART_TABLE'])
-items_table = dynamodb.Table(os.environ['ITEMS_TABLE'])
+cart_table = dynamodb.Table(os.environ['CART_TABLE_NAME'])
+items_table = dynamodb.Table(os.environ['ITEMS_TABLE_NAME'])
 
 def lambda_handler(event, context):
     try:

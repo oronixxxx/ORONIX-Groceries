@@ -1,14 +1,74 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "CloudFormation template - Oronix Groceries project",
+  "Description": "CloudFormation template - Infrastructure for Oronix Groceries website Bucket",
   "Parameters": {
     "EnvName": {
       "Type": "String",
-      "Description": "Environment name like 'dev', 'prod'"
+      "Description": "Environment name (e.g. dev, prod)"
+    },
+    "WebsiteBucketName": {
+      "Type": "String",
+      "Description": "Name of the S3 bucket for frontend static website"
     }
   },
   "Resources": {
+    "WebsiteS3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": { "Ref": "WebsiteBucketName" },
+        "WebsiteConfiguration": {
+          "IndexDocument": "homePage.html"
+        },
+        "PublicAccessBlockConfiguration": {
+          "RestrictPublicBuckets": false,
+          "IgnorePublicAcls": false,
+          "BlockPublicPolicy": false,
+          "BlockPublicAcls": false
+        },
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "BucketKeyEnabled": true,
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "WebsiteS3BucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": { "Ref": "WebsiteS3Bucket" },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Principal": "*",
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": ["", [ { "Fn::GetAtt": [ "WebsiteS3Bucket", "Arn" ] }, "/*" ] ]
+              }
+            }
+          ]
+        }
+      }
+    }
   },
   "Outputs": {
+    "WebsiteBucketName": {
+      "Description": "Name of the website S3 bucket",
+      "Value": { "Ref": "WebsiteS3Bucket" }
+    },
+    "WebsiteBucketStaticURL": {
+      "Description": "Static website endpoint URL",
+      "Value": { "Fn::GetAtt": [ "WebsiteS3Bucket", "WebsiteURL" ] }
+    },
+    "WebsiteBucketDomainName": {
+      "Description": "Bucket DNS name",
+      "Value": { "Fn::GetAtt": [ "WebsiteS3Bucket", "DomainName" ] }
+    }
   }
 }

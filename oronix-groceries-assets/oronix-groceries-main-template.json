@@ -104,8 +104,8 @@
           "PostLogoutURLs": { "Ref": "PostLogoutURLs" },
           "CognitoAdminGroupName": { "Ref": "CognitoAdminGroupName" },
           "CognitoUserGroupName":  { "Ref": "CognitoUserGroupName" },
-          "DynamoDBTableNameUsers": {
-            "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableNameUsers"]
+          "DynamoDBTableUsersName": {
+            "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableUsersName"]
           },
           "LabRoleArn": { "Ref": "LabRoleArn" }
         }
@@ -123,11 +123,11 @@
           "CognitoUserPoolId": {
             "Fn::GetAtt": ["CognitoStack", "Outputs.CognitoUserPoolId"]
           },
-          "AdminGroupName": {
-            "Fn::GetAtt": ["CognitoStack", "Outputs.AdminGroupName"]
+          "CognitoAdminGroupName": {
+            "Fn::GetAtt": ["CognitoStack", "Outputs.CognitoAdminGroupName"]
           },
-          "UserGroupName": {
-            "Fn::GetAtt": ["CognitoStack", "Outputs.UserGroupName"]
+          "CognitoUserGroupName": {
+            "Fn::GetAtt": ["CognitoStack", "Outputs.CognitoUserGroupName"]
           },          
           "DynamoDBTableUsersName": {
             "Fn::GetAtt": ["DynamoDBTablesStack", "Outputs.DynamoDBTableUsersName"]
@@ -210,6 +210,28 @@
       "Description": "Nested buckets stack name",
       "Value": { "Ref": "WebsiteBucketStack" }
     },
+    "WebsiteBucketStaticURL": {
+      "Description": "Static website endpoint URL",
+      "Value": {
+        "Fn::GetAtt": [
+          "WebsiteBucketStack",
+          "Outputs.WebsiteBucketStaticURL"
+        ]
+      }
+    },
+    "WebsiteBucketDomainName": {
+      "Description": "DNS name of the website bucket",
+      "Value": {
+        "Fn::GetAtt": [
+          "WebsiteBucketStack",
+          "Outputs.WebsiteBucketDomainName"
+        ]
+      }
+    },
+    "DynamoDBTablesStackName": {
+      "Description": "Nested DynamoDB tables stack name",
+      "Value": { "Ref": "DynamoDBTablesStack" }
+    },
     "CognitoStackName": {
       "Description": "Nested Cognito stack name",
       "Value": { "Ref": "CognitoStack" }
@@ -253,10 +275,6 @@
           "Outputs.ApiId"
         ]
       }
-    },
-    "DynamoDBTablesStackName": {
-      "Description": "Nested DynamoDB tables stack name",
-      "Value": { "Ref": "DynamoDBTablesStack" }
     }
   }
 }

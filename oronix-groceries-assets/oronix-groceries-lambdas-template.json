@@ -4,11 +4,349 @@
   "Parameters": {
     "EnvName": {
       "Type": "String",
-      "Description": "Environment name like 'dev', 'prod'"
+      "Description": "Environment name (e.g., dev, prod)"
+    },
+    "AssetsBucketName": {
+      "Type": "String",
+      "Description": "S3 bucket name containing Lambda zip file"
+    },
+    "LambdaCodeS3Key": {
+      "Type": "String",
+      "Description": "S3 key for the Lambda zip file"
+    },
+    "CognitoUserPoolId": {
+      "Type": "String",
+      "Description": "ID of the Cognito User Pool"
+    },
+    "CognitoAdminGroupName": {
+      "Type": "String",
+      "Description": "Name of the Cognito Admin group"
+    },
+    "CognitoUserGroupName": {
+      "Type": "String",
+      "Description": "Name of the Cognito Users group"
+    },
+    "DynamoDBTableUsersName": {
+      "Type": "String",
+      "Description": "Name of the Users DynamoDB table"
+    },
+    "DynamoDBTableCartName": {
+      "Type": "String",
+      "Description": "Name of the Cart DynamoDB table"
+    },
+    "DynamoDBTableCategoriesName": {
+      "Type": "String",
+      "Description": "Name of the Categories DynamoDB table"
+    },
+    "DynamoDBTableColorsName": {
+      "Type": "String",
+      "Description": "Name of the Colors DynamoDB table"
+    },
+    "DynamoDBTableItemsName": {
+      "Type": "String",
+      "Description": "Name of the Items DynamoDB table"
+    },
+    "DynamoDBTableOrdersName": {
+      "Type": "String",
+      "Description": "Name of the Orders DynamoDB table"
+    },
+    "LabRoleArn": {
+      "Type": "String",
+      "Description": "IAM role ARN for Lambda functions execution"
     }
   },
   "Resources": {
+    "CheckUserRoleLambdaFunction" : {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "CheckUserRole${EnvName}" },
+        "Handler": "CheckUserRole.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": { 
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" } 
+        },
+        "Environment": { 
+          "Variables": { 
+            "ADMIN_GROUP_NAME": { "Ref": "CognitoAdminGroupName" } 
+          } 
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "FetchAllItemsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "FetchAllItems${EnvName}" },
+        "Handler": "FetchAllItems.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": { 
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" } 
+        },
+        "Environment": { 
+          "Variables": { 
+            "ITEMS_TABLE_NAME": { "Ref": "DynamoDBTableItemsName" } 
+          } 
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "FetchItemDetailsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "FetchItemDetails${EnvName}" },
+        "Handler": "FetchItemDetails.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": { 
+          "S3Bucket": { "Ref": "AssetsBucketName" }, 
+          "S3Key": { "Ref": "LambdaCodeS3Key" } 
+        },
+        "Environment": { 
+          "Variables": { 
+            "ITEMS_TABLE_NAME": { "Ref": "DynamoDBTableItemsName" } 
+          } 
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "FetchAllCategoriesLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "FetchAllCategories${EnvName}" },
+        "Handler": "FetchAllCategories.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": {
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" }
+        },
+        "Environment": {
+          "Variables": {
+            "CATEGORIES_TABLE_NAME": { "Ref": "DynamoDBTableCategoriesName" }
+          }
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "FetchAllColorsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "FetchAllColors${EnvName}" },
+        "Handler": "FetchAllColors.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": {
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" }
+        },
+        "Environment": {
+          "Variables": {
+            "COLORS_TABLE_NAME": { "Ref": "DynamoDBTableColorsName" }
+          }
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "FetchCartItemsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "FetchCartItems${EnvName}" },
+        "Handler": "FetchCartItems.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": {
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" }
+        },
+        "Environment": {
+          "Variables": {
+            "CART_TABLE_NAME": { "Ref": "DynamoDBTableCartName" }, 
+            "ITEMS_TABLE_NAME": { "Ref": "DynamoDBTableItemsName" } 
+          }
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "AddItemToCartLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "AddItemToCart${EnvName}" },
+        "Handler": "AddItemToCart.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": {
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" }
+        },
+        "Environment": {
+          "Variables": {
+            "CART_TABLE_NAME": { "Ref": "DynamoDBTableCartName" }
+          }
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "UpdateCartItemQuantityLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "UpdateCartItemQuantity${EnvName}" },
+        "Handler": "UpdateCartItemQuantity.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": {
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" }
+        },
+        "Environment": {
+          "Variables": {
+            "CART_TABLE_NAME": { "Ref": "DynamoDBTableCartName" }
+          }
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "DeleteItemFromCartLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "DeleteItemFromCart${EnvName}" },
+        "Handler": "DeleteItemFromCart.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": {
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" }
+        },
+        "Environment": {
+          "Variables": {
+            "CART_TABLE_NAME": { "Ref": "DynamoDBTableCartName" }
+          }
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "PlaceOrderLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "PlaceOrder${EnvName}" },
+        "Handler": "PlaceOrder.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": {
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" }
+        },
+        "Environment": {
+          "Variables": {
+            "CART_TABLE_NAME": { "Ref": "DynamoDBTableCartName" },
+            "ORDERS_TABLE_NAME": { "Ref": "DynamoDBTableOrdersName" }
+          }
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "AddItemToInventoryLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties":{
+        "FunctionName": { "Fn::Sub": "AddItemToInventory${EnvName}" },
+        "Handler": "AddItemToInventory.lambda_handler",
+        "Role": { "Ref":"LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": {
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" }
+        },
+        "Environment": {
+          "Variables": {
+            "ITEMS_TABLE_NAME": { "Ref": "DynamoDBTableItemsName" }
+          }
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
+    "DeleteFromInventoryLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties":{
+        "FunctionName": { "Fn::Sub": "DeleteFromInventory${EnvName}" },
+        "Handler": "DeleteFromInventory.lambda_handler",
+        "Role": { "Ref":"LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": {
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" }
+        },
+        "Environment": {
+          "Variables": {
+            "ITEMS_TABLE_NAME": { "Ref": "DynamoDBTableItemsName" }
+          }
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    }
   },
   "Outputs": {
+    "CheckUserRoleLambdaFunctionArn": { 
+      "Description":"ARN of CheckUserRoleLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["CheckUserRoleLambdaFunction","Arn"] } 
+    },
+    "FetchAllItemsLambdaFunctionArn": { 
+      "Description":"ARN of FetchAllItemsLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["FetchAllItemsLambdaFunction","Arn"] } 
+    },
+    "FetchItemDetailsLambdaFunctionArn": { 
+      "Description":"ARN of FetchItemDetailsLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["FetchItemDetailsLambdaFunction","Arn"] } 
+    },
+    "FetchAllCategoriesLambdaFunctionArn": { 
+      "Description":"ARN of FetchAllCategoriesLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["FetchAllCategoriesLambdaFunction","Arn"] } 
+    },
+    "FetchAllColorsLambdaFunctionArn": { 
+      "Description":"ARN of FetchAllColorsLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["FetchAllColorsLambdaFunction","Arn"] } 
+    },
+    "FetchCartItemsLambdaFunctionArn": { 
+      "Description":"ARN of FetchCartItemsLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["FetchCartItemsLambdaFunction","Arn"] } 
+    },
+    "AddItemToCartLambdaFunctionArn": { 
+      "Description":"ARN of AddItemToCartLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["AddItemToCartLambdaFunction","Arn"] } 
+    },
+    "UpdateCartItemQuantityLambdaFunctionArn": { 
+      "Description":"ARN of UpdateCartItemQuantityLambdaFunction",  
+      "Value": { "Fn::GetAtt": ["UpdateCartItemQuantityLambdaFunction","Arn"] } 
+    },
+    "DeleteItemFromCartLambdaFunctionArn": { 
+      "Description":"ARN of DeleteItemFromCartLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["DeleteItemFromCartLambdaFunction","Arn"] } 
+    },
+    "PlaceOrderLambdaFunctionArn": { 
+      "Description":"ARN of PlaceOrderLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["PlaceOrderLambdaFunction","Arn"] } 
+    },
+    "AddItemToInventoryLambdaFunctionArn": { 
+      "Description":"ARN of AddItemToInventoryLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["AddItemToInventoryLambdaFunction","Arn"] } 
+    },
+    "DeleteFromInventoryLambdaFunctionArn": { 
+      "Description":"ARN of DeleteFromInventoryLambdaFunction", 
+      "Value": { "Fn::GetAtt": ["DeleteFromInventoryLambdaFunction","Arn"] } 
+    }
   }
 }

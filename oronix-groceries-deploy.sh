@@ -15,6 +15,8 @@ echo "📌 AWS Region: $AWS_REGION"
 # Set parameters for CF template creation
 ENV_NAME="-test" # for every resource
 STAGE_NAME="test" # only for the API Stage Name
+echo "📌 Environment name: $ENV_NAME"
+echo "📌 Api Gateway stage name: $AWS_REGION"
 
 PROJECT_NAME="oronix-groceries"
 echo "📌 Project name: $PROJECT_NAME"
@@ -62,7 +64,7 @@ COGNITO_ADMIN_GROUP_NAME="admins"
 COGNITO_USER_GROUP_NAME="users"
 
 # ========================= STARTING DEPLOYMENT =========================
-echo "🚀 Starting ORONIX Groeries deployment in $ENV_NAME environment"
+echo "🚀 Starting Oronix Groeries deployment in $ENV_NAME environment"
 
 # ============================== S3 BUCKET ==============================
 echo "Checking if the buckets were created"

@@ -30,7 +30,7 @@
       "Type": "String",
       "Description": "Name of the Cognito User Pool regular users group"
     },
-    "DynamoDBTableNameUsers": {
+    "DynamoDBTableUsersName": {
       "Type": "String",
       "Description": "Name of the DynamoDB Users table from the nested DynamoDB stack"
     },
@@ -80,7 +80,7 @@
         "ExplicitAuthFlows": [ "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH" ]
       }
     },
-    "AdminsGroup": {
+    "CognitoAdminsGroup": {
       "Type": "AWS::Cognito::UserPoolGroup",
       "Properties": {
         "GroupName": { "Ref": "CognitoAdminGroupName" },
@@ -89,7 +89,7 @@
         "RoleArn": { "Ref": "LabRoleArn" }
       }
     },
-    "UsersGroup": {
+    "CognitoUsersGroup": {
       "Type": "AWS::Cognito::UserPoolGroup",
       "Properties": {
         "GroupName": { "Ref": "CognitoUserGroupName" },
@@ -111,7 +111,7 @@
         },
         "Environment": {
           "Variables": {
-            "USERS_TABLE_NAME": { "Ref": "DynamoDBTableNameUsers" },
+            "USERS_TABLE_NAME": { "Ref": "DynamoDBTableUsersName" },
             "USER_GROUP_NAME":   { "Ref": "CognitoUserGroupName" }
           }
         },
@@ -147,15 +147,15 @@
       "Description": "ID of the Cognito App Client",
       "Value": { "Ref": "CognitoUserPoolClient" }
     },
-    "AdminGroupName": {
+    "CognitoAdminGroupName": {
       "Description": "Name of the Admins group",
-      "Value": { "Ref": "AdminsGroup" },
-      "Export": { "Name": { "Fn::Sub": "AdminGroupName${EnvName}" } }
+      "Value": { "Ref": "CognitoAdminsGroup" },
+      "Export": { "Name": { "Fn::Sub": "CognitoAdminGroupName${EnvName}" } }
     },
-    "UserGroupName": {
+    "CognitoUserGroupName": {
       "Description": "Name of the Users group",
-      "Value": { "Ref": "UsersGroup" },
-      "Export": { "Name": { "Fn::Sub": "UserGroupName${EnvName}" } }
+      "Value": { "Ref": "CognitoUsersGroup" },
+      "Export": { "Name": { "Fn::Sub": "CognitoUserGroupName${EnvName}" } }
     }
   }
 }

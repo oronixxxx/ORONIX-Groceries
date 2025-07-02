@@ -18,7 +18,8 @@ def lambda_handler(event, context):
     user_id = event['userName']  # Cognito "sub"
     user_attributes = event['request']['userAttributes']
     email = user_attributes.get('email')
-    name = user_attributes.get('name', 'Unknown')  # Default if name is not provided
+    given_name = user_attributes.get('given_name', '') # Default if name is not provided
+    family_name = user_attributes.get('family_name', '') # Default if name is not provided
     created_at = datetime.utcnow().isoformat()  # Current UTC timestamp
 
     # Insert user into DynamoDB
@@ -27,7 +28,8 @@ def lambda_handler(event, context):
             Item={
                 'userId': user_id,         # Partition Key
                 'email': email,            # User email
-                'name': name,              # User name
+                'firstName':  given_name,  # User first name
+                'lastName': family_name,   # User last name
                 'createdAt': created_at    # Timestamp
             }
         )
