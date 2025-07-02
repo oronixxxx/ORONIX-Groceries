@@ -1,7 +1,4 @@
-import {
-  ensureAuthenticated,
-  getAuthHeaders
-} from "./auth.js";
+import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
 
 let currentIndex = 0;
 let visibleItems = 4;
@@ -51,11 +48,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   await checkUserRole();
 
   const logoutBtn = document.getElementById("logoutBtn");
-  logoutBtn.addEventListener("click", function (event) {
-    event.preventDefault();
-    sessionStorage.clear();
-    window.location.href = window.config.app.homePageUrl;
-  });
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      sessionStorage.clear();
+      window.location.href = window.config.app.homePageUrl;
+    });
+  }
 
   const track = document.getElementById("categoryTrack");
 
