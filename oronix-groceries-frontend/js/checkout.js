@@ -91,6 +91,13 @@ async function loadCartItems() {
 }
 
 async function placeOrder() {
+     const cartItems = await getCartItems();
+
+    if (!cartItems || cartItems.length === 0) {
+        alert("Your cart is empty. Please add items before placing an order.");
+        return;
+    }
+    
     const form = document.getElementById('checkout-form');
     const formData = new FormData(form);
     const order = {
