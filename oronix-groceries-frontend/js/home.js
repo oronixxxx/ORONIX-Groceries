@@ -4,6 +4,21 @@ let currentIndex = 0;
 let visibleItems = 4;
 let totalItems = 0;
 
+window.scrollCategories = function(direction) {
+  const track = document.getElementById("categoryTrack");
+  const maxIndex = Math.ceil(totalItems / visibleItems) - 1;
+
+  currentIndex += direction;
+  if (currentIndex < 0) currentIndex = maxIndex;
+  if (currentIndex > maxIndex) currentIndex = 0;
+
+  const itemWidth = track.children[0]?.offsetWidth || 0;
+  const scrollAmount = currentIndex * itemWidth * visibleItems;
+
+  track.style.transform = `translateX(-${scrollAmount}px)`;
+};
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   // helper: if window.config isn't ready yet, wait for the 'configLoaded' event
   function waitForConfig() {
@@ -89,19 +104,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-function scrollCategories(direction) {
-  const track = document.getElementById("categoryTrack");
-  const maxIndex = Math.ceil(totalItems / visibleItems) - 1;
-  
-  currentIndex += direction;
-  if (currentIndex < 0) currentIndex = maxIndex;
-  if (currentIndex > maxIndex) currentIndex = 0;
-
-  const itemWidth = track.children[0]?.offsetWidth || 0;
-  const scrollAmount = currentIndex * itemWidth * visibleItems;
-
-  track.style.transform = `translateX(-${scrollAmount}px)`;
-}
 
 async function fetchAllCategories() {
   const fetchAllCategoriesAPI = window.config.api.fetchAllCategories;
