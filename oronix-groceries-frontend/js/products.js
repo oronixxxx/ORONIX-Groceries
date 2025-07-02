@@ -25,6 +25,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Load configuration first, then enforce authentication and initialize the products page
   await waitForConfig();
 
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      sessionStorage.clear();
+      window.location.href = window.config.app.homePageUrl;
+    });
+  }
+  
   try {
     // Ensure user is authenticated and token is valid before any further actions
     ensureAuthenticated(window.config.cognito.loginUrl);
@@ -142,16 +151,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         card.className = "product-card rounded-xl shadow-md overflow-hidden text-center bg-white hover:shadow-xl transition";
         card.setAttribute("data-id", item.id);
         card.setAttribute("data-category", item.category);
-        card.setAttribute("data-price", item.price);
+        card.setAttribute("data-price", Number(item.price));
         card.setAttribute("data-color", item.color.toLowerCase());
 
         const name = item.name[0].toUpperCase() + item.name.slice(1);
         //const imageName = item.name.toLowerCase().replace(/\s/g, '');
         const imageName = toCamelCase(item.name);
+        const imageUrl = `images/items/${imageName}.png`;
 
         card.innerHTML = `
           <a href="product.html?id=${item.id}">
-            <img src="images/items/${imageName}.png" alt="${name}" class="object-cover w-full h-40 rounded-t-xl">
+            <img 
+              src="${imageUrl}" 
+              alt="${name}" 
+              class="object-cover w-full h-40 rounded-t-xl"
+              onerror="this.onerror=null; this.src='images/items/logo.png'; this.className='object-contain w-full h-40 rounded-t-xl';"
+            >
             <div class="p-2 font-medium text-gray-800">${name}</div>
           </a>
         `;
