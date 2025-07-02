@@ -167,11 +167,14 @@ function initAdminPage() {
   const colorSelect = document.getElementById('color-select');
 
   const logoutBtn = document.getElementById("logoutBtn");
-  logoutBtn.addEventListener("click", function (event) {
-    event.preventDefault();
-    sessionStorage.clear();
-    window.location.href = window.config.app.homePageUrl;
-  });
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      sessionStorage.clear();
+      window.location.href = window.config.app.homePageUrl;
+    });
+  }
 
   toggleBtn.addEventListener('click', () => {
     const isHidden = form.classList.toggle('hidden');
@@ -233,14 +236,14 @@ function initAdminPage() {
           <div class="flex items-start gap-4 text-left">
             <img
               src="images/items/${fileName}.png"
-              onerror="this.onerror=null; this.src='images/logo.png';"
+              onerror="this.onerror=null; this.src='images/items/logo.png';"
               alt="${item.name}"
               class="w-20 h-20 object-contain rounded-lg"
             />  
             <div>
               <h3 class="font-semibold text-lg text-gray-800 mb-1">${item.name}</h3>
               <p class="text-sm text-gray-600 mb-1">${item.description || ''}</p>
-              <p class="text-sm text-gray-700 font-medium">Price: ₪${item.price}</p>
+              <p class="text-sm text-gray-700 font-medium">Price: ₪${Number(item.price)}</p>
               <p class="text-sm text-gray-600">Category: ${item.category} | Color: ${item.color}</p>
             </div>
           </div>
