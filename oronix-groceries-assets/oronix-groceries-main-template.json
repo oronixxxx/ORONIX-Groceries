@@ -54,7 +54,7 @@
       "Type": "String",
       "Description": "S3 URL for the nested API template"
     },
-    "StageName": {
+    "ApiStageName": {
       "Type": "String",
       "Description": "Stage name for API Gateway (e.g., 'dev', 'prod')"
     },
@@ -160,7 +160,7 @@
         },
         "Parameters": {
           "EnvName": { "Ref": "EnvName" },
-          "StageName": { "Ref": "StageName" },
+          "ApiStageName": { "Ref": "ApiStageName" },
           "CognitoUserPoolArn": {
             "Fn::GetAtt": ["CognitoStack", "Outputs.CognitoUserPoolArn"]
           },

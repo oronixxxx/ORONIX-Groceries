@@ -1,14 +1,1123 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "CloudFormation template - Oronix Groceries project",
+  "Description": "CloudFormation template - Infrastructure for Oronix Groceries API Gateway",
   "Parameters": {
     "EnvName": {
       "Type": "String",
-      "Description": "Environment name like 'dev', 'prod'"
+      "Description": "Environment name (e.g. dev, prod)"
+    },
+    "ApiStageName": {
+      "Type": "String",
+      "Description": "API Gateway stage name"
+    },
+    "CognitoUserPoolArn": {
+      "Type": "String",
+      "Description": "ARN of the Cognito User Pool for authorizer"
+    },
+    "CheckUserRoleLambdaFunctionArn": { "Type": "String" },
+    "FetchAllItemsLambdaFunctionArn": { "Type": "String" },
+    "FetchItemDetailsLambdaFunctionArn": { "Type": "String" },
+    "FetchAllCategoriesLambdaFunctionArn": { "Type": "String" },
+    "FetchAllColorsLambdaFunctionArn": { "Type": "String" },
+    "FetchCartItemsLambdaFunctionArn": { "Type": "String" },
+    "AddItemToCartLambdaFunctionArn": { "Type": "String" },
+    "UpdateCartItemQuantityLambdaFunctionArn": { "Type": "String" },
+    "DeleteItemFromCartLambdaFunctionArn": { "Type": "String" },
+    "PlaceOrderLambdaFunctionArn": { "Type": "String" },
+    "AddItemToInventoryLambdaFunctionArn": { "Type": "String" },
+    "DeleteFromInventoryLambdaFunctionArn": { "Type": "String" },
+    "LabRoleArn": {
+      "Type": "String",
+      "Description": "IAM role ARN with permissions for Lambda"
     }
   },
   "Resources": {
+    "OronixGroceriesApi": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": { "Fn::Sub": "OronixGroceriesApi${EnvName}" }
+      }
+    },
+    "CognitoUserPoolAuthorizer": {
+      "Type": "AWS::ApiGateway::Authorizer",
+      "Properties": {
+        "Name": "CognitoUserPoolAuthorizer",
+        "Type": "COGNITO_USER_POOLS",
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "IdentitySource": "method.request.header.Authorization",
+        "ProviderARNs": [ { "Ref": "CognitoUserPoolArn" } ]
+      }
+    },
+
+    "ItemsResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId":  { "Fn::GetAtt": ["OronixGroceriesApi","RootResourceId"] },
+        "PathPart":  "items",
+        "RestApiId": { "Ref": "OronixGroceriesApi" }
+      }
+    },
+    "ItemsOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "ItemsResource" },
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses":[{ "StatusCode":"200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+              "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            },
+            "ResponseTemplates": { "application/json":"{}" }
+          }]
+        },
+        "MethodResponses":[{ 
+          "StatusCode":"200",
+          "ResponseParameters":{
+            "method.response.header.Access-Control-Allow-Headers":true,
+            "method.response.header.Access-Control-Allow-Methods":true,
+            "method.response.header.Access-Control-Allow-Origin":true
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "ItemsGetMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "ResourceId": { "Ref": "ItemsResource" },
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": { "Ref": "CognitoUserPoolAuthorizer" },
+        "Integration": {
+          "Type": "AWS_PROXY",
+          "IntegrationHttpMethod": "POST",
+          "Uri": {
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FetchAllItemsLambdaFunctionArn}/invocations"
+          }
+        },
+        "MethodResponses":[{ "StatusCode":"200",
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Origin": true
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionFetchAllItems": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Ref": "FetchAllItemsLambdaFunctionArn" },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/GET/items"
+        }
+      }
+    },
+
+    "ItemsItemResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId":  { "Ref": "ItemsResource" },
+        "PathPart":  "item",
+        "RestApiId": { "Ref": "OronixGroceriesApi" }
+      }
+    },
+    "ItemsItemOptionsMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "ItemsItemResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses":[{ "StatusCode":"200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+              "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'", 
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            },
+            "ResponseTemplates": { "application/json":"{}" }
+          }]
+        },
+        "MethodResponses":[{ 
+          "StatusCode":"200",
+          "ResponseParameters":{
+            "method.response.header.Access-Control-Allow-Headers":true,
+            "method.response.header.Access-Control-Allow-Methods":true,
+            "method.response.header.Access-Control-Allow-Origin":true
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "ItemsItemGetMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "ResourceId": { "Ref": "ItemsItemResource" },
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": { "Ref": "CognitoUserPoolAuthorizer" },
+        "Integration": {
+          "Type": "AWS_PROXY",
+          "IntegrationHttpMethod": "POST",
+          "Uri": {
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FetchItemDetailsLambdaFunctionArn}/invocations"
+          }
+        },
+        "MethodResponses": [{
+          "StatusCode": "200",
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Origin": true
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionFetchItemDetails": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Ref": "FetchItemDetailsLambdaFunctionArn" },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn":{
+          "Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/GET/items/item"
+        }
+      }
+    },
+
+    "CategoriesResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId":  { "Fn::GetAtt": ["OronixGroceriesApi","RootResourceId"] },
+        "PathPart":  "categories",
+        "RestApiId": { "Ref": "OronixGroceriesApi" }
+      }
+    },
+    "CategoriesOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "CategoriesResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses":[{ "StatusCode":"200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+              "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'", 
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            },
+            "ResponseTemplates": { "application/json":"{}" }
+          }]
+        },
+        "MethodResponses":[{ 
+          "StatusCode":"200",
+          "ResponseParameters":{
+            "method.response.header.Access-Control-Allow-Headers":true,
+            "method.response.header.Access-Control-Allow-Methods":true,
+            "method.response.header.Access-Control-Allow-Origin":true
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "CategoriesGetMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "ResourceId": { "Ref": "CategoriesResource" },
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": { "Ref": "CognitoUserPoolAuthorizer" },
+        "Integration": {
+          "Type": "AWS_PROXY",
+          "IntegrationHttpMethod": "POST",
+          "Uri": {
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FetchAllCategoriesLambdaFunctionArn}/invocations"
+          }
+        },
+        "MethodResponses":[{
+          "StatusCode":"200",
+          "ResponseParameters": { 
+            "method.response.header.Access-Control-Allow-Origin": true 
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionFetchAllCategories": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Ref": "FetchAllCategoriesLambdaFunctionArn" },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Sub": "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/GET/categories"
+        }
+      }
+    },
+
+    "ColorsResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId":  { "Fn::GetAtt": ["OronixGroceriesApi","RootResourceId"] },
+        "PathPart":  "colors",
+        "RestApiId": { "Ref": "OronixGroceriesApi" }
+      }
+    },
+    "ColorsOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "ColorsResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses":[{ "StatusCode":"200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+              "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'", 
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            },
+            "ResponseTemplates": { "application/json":"{}" }
+          }]
+        },
+        "MethodResponses":[{ 
+          "StatusCode":"200",
+          "ResponseParameters":{
+            "method.response.header.Access-Control-Allow-Headers":true,
+            "method.response.header.Access-Control-Allow-Methods":true,
+            "method.response.header.Access-Control-Allow-Origin":true
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "ColorsGetMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "ResourceId": { "Ref": "ColorsResource" },
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "AuthorizationType":"COGNITO_USER_POOLS",
+        "AuthorizerId":{ "Ref":"CognitoUserPoolAuthorizer" },
+        "Integration": {
+          "Type":"AWS_PROXY",
+          "IntegrationHttpMethod":"POST",
+          "Uri": {
+            "Fn::Sub":"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FetchAllColorsLambdaFunctionArn}/invocations"
+          }
+        },
+        "MethodResponses":[{
+          "StatusCode":"200",
+          "ResponseParameters": { 
+            "method.response.header.Access-Control-Allow-Origin": true 
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionFetchAllColors": {
+      "Type":"AWS::Lambda::Permission",
+      "Properties":{
+        "FunctionName":{ "Ref":"FetchAllColorsLambdaFunctionArn" },
+        "Action":"lambda:InvokeFunction",
+        "Principal":"apigateway.amazonaws.com",
+        "SourceArn":{
+          "Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/GET/colors"
+        }
+      }
+    },
+
+    "CartResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId":  { "Fn::GetAtt": ["OronixGroceriesApi","RootResourceId"] },
+        "PathPart":  "cart",
+        "RestApiId": { "Ref":"OronixGroceriesApi" }
+      }
+    },
+    "CartOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "CartResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" }, 
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'", 
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              },
+              "ResponseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true
+            },
+            "ResponseModels": {
+              "application/json": "Empty"
+            }
+          }
+        ]
+      }
+    },
+    "CartGetMethod": {
+      "Type":"AWS::ApiGateway::Method",
+      "Properties":{
+        "HttpMethod":"GET",
+        "ResourceId":{ "Ref":"CartResource" },
+        "RestApiId":{ "Ref":"OronixGroceriesApi" },
+        "AuthorizationType":"COGNITO_USER_POOLS",
+        "AuthorizerId":{ "Ref":"CognitoUserPoolAuthorizer" },
+        "Integration":{
+          "Type":"AWS_PROXY",
+          "IntegrationHttpMethod":"POST",
+          "Uri":{
+            "Fn::Sub":"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FetchCartItemsLambdaFunctionArn}/invocations"
+          }
+        },
+        "MethodResponses":[{
+          "StatusCode":"200",
+          "ResponseParameters": { 
+            "method.response.header.Access-Control-Allow-Origin": true 
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionFetchCartItems": {
+      "Type":"AWS::Lambda::Permission",
+      "Properties":{
+        "FunctionName":{ "Ref":"FetchCartItemsLambdaFunctionArn" },
+        "Action":"lambda:InvokeFunction",
+        "Principal":"apigateway.amazonaws.com",
+        "SourceArn":{"Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/GET/cart"}
+      }
+    },
+
+    "CartAddResource": {
+      "Type":"AWS::ApiGateway::Resource",
+      "Properties":{
+        "ParentId":{ "Ref":"CartResource" },
+        "PathPart":"add",
+        "RestApiId":{ "Ref":"OronixGroceriesApi" }
+      }
+    },
+    "CartAddOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "CartAddResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" }, 
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'", 
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              },
+              "ResponseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true
+            },
+            "ResponseModels": {
+              "application/json": "Empty"
+            }
+          }
+        ]
+      }
+    },
+    "CartAddPostMethod": {
+      "Type":"AWS::ApiGateway::Method",
+      "Properties":{
+        "HttpMethod":"POST",
+        "ResourceId":{ "Ref":"CartAddResource" },
+        "RestApiId":{ "Ref":"OronixGroceriesApi" },
+        "AuthorizationType":"COGNITO_USER_POOLS",
+        "AuthorizerId":{ "Ref":"CognitoUserPoolAuthorizer" },
+        "Integration":{
+          "Type":"AWS_PROXY",
+          "IntegrationHttpMethod":"POST",
+          "Uri":{
+            "Fn::Sub":"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AddItemToCartLambdaFunctionArn}/invocations"
+          }
+        },
+        "MethodResponses":[{
+          "StatusCode":"200",
+          "ResponseParameters": { 
+            "method.response.header.Access-Control-Allow-Origin": true 
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionAddItemToCart": {
+      "Type":"AWS::Lambda::Permission",
+      "Properties":{
+        "FunctionName":{ "Ref":"AddItemToCartLambdaFunctionArn" },
+        "Action":"lambda:InvokeFunction",
+        "Principal":"apigateway.amazonaws.com",
+        "SourceArn":{"Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/POST/cart/add"}
+      }
+    },
+
+    "CartUpdateResource": {
+      "Type":"AWS::ApiGateway::Resource",
+      "Properties":{
+        "ParentId":{ "Ref":"CartResource" },
+        "PathPart":"update",
+        "RestApiId":{ "Ref":"OronixGroceriesApi" }
+      }
+    },
+    "CartUpdateOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "CartUpdateResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" }, 
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,PUT'", 
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              },
+              "ResponseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true
+            },
+            "ResponseModels": {
+              "application/json": "Empty"
+            }
+          }
+        ]
+      }
+    },
+    "CartUpdatePutMethod": {
+      "Type":"AWS::ApiGateway::Method",
+      "Properties":{
+        "HttpMethod":"PUT",
+        "ResourceId":{ "Ref":"CartUpdateResource" },
+        "RestApiId":{ "Ref":"OronixGroceriesApi" },
+        "AuthorizationType":"COGNITO_USER_POOLS",
+        "AuthorizerId":{ "Ref":"CognitoUserPoolAuthorizer" },
+        "Integration": {
+          "Type":"AWS_PROXY",
+          "IntegrationHttpMethod":"POST",
+          "Uri":{
+            "Fn::Sub":"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateCartItemQuantityLambdaFunctionArn}/invocations"
+          }
+        },
+        "MethodResponses":[{
+          "StatusCode":"200",
+          "ResponseParameters": { 
+            "method.response.header.Access-Control-Allow-Origin": true 
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionUpdateCartItem": {
+      "Type":"AWS::Lambda::Permission",
+      "Properties":{
+        "FunctionName":{ "Ref":"UpdateCartItemQuantityLambdaFunctionArn" },
+        "Action":"lambda:InvokeFunction",
+        "Principal":"apigateway.amazonaws.com",
+        "SourceArn":{"Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/PUT/cart/update"}
+      }
+    },
+
+    "CartRemoveResource": {
+      "Type":"AWS::ApiGateway::Resource",
+      "Properties":{
+        "ParentId":{ "Ref":"CartResource" },
+        "PathPart":"remove",
+        "RestApiId":{ "Ref":"OronixGroceriesApi" }
+      }
+    },
+    "CartRemoveOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "CartRemoveResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" }, 
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'DELETE,OPTIONS'", 
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              },
+              "ResponseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true
+            },
+            "ResponseModels": {
+              "application/json": "Empty"
+            }
+          }
+        ]
+      }
+    },
+    "CartRemoveDeleteMethod": {
+      "Type":"AWS::ApiGateway::Method",
+      "Properties":{
+        "HttpMethod":"DELETE",
+        "ResourceId":{ "Ref":"CartRemoveResource" },
+        "RestApiId":{ "Ref":"OronixGroceriesApi" },
+        "AuthorizationType":"COGNITO_USER_POOLS",
+        "AuthorizerId":{ "Ref":"CognitoUserPoolAuthorizer" },
+        "Integration":{
+          "Type":"AWS_PROXY",
+          "IntegrationHttpMethod":"POST",
+          "Uri":{
+            "Fn::Sub":"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteItemFromCartLambdaFunctionArn}/invocations"
+          }
+        },
+        "MethodResponses":[{
+          "StatusCode":"200",
+          "ResponseParameters": { 
+            "method.response.header.Access-Control-Allow-Origin": true 
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionDeleteCartItem": {
+      "Type":"AWS::Lambda::Permission",
+      "Properties":{
+        "FunctionName":{ "Ref":"DeleteItemFromCartLambdaFunctionArn" },
+        "Action":"lambda:InvokeFunction",
+        "Principal":"apigateway.amazonaws.com",
+        "SourceArn":{ "Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/DELETE/cart/remove" }
+      }
+    },
+
+    "OrderResource": {
+      "Type":"AWS::ApiGateway::Resource",
+      "Properties":{
+        "ParentId":{ "Fn::GetAtt":["OronixGroceriesApi","RootResourceId"] },
+        "PathPart":"order",
+        "RestApiId":{ "Ref":"OronixGroceriesApi" }
+      }
+    },
+    "OrderOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "OrderResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses":[{ "StatusCode":"200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'", 
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            },
+            "ResponseTemplates": { "application/json":"{}" }
+          }]
+        },
+        "MethodResponses":[{ 
+          "StatusCode":"200",
+          "ResponseParameters":{
+            "method.response.header.Access-Control-Allow-Headers":true,
+            "method.response.header.Access-Control-Allow-Methods":true,
+            "method.response.header.Access-Control-Allow-Origin":true
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "OrderPostMethod": {
+      "Type":"AWS::ApiGateway::Method",
+      "Properties":{
+        "HttpMethod":"POST",
+        "ResourceId":{ "Ref":"OrderResource" },
+        "RestApiId":{ "Ref":"OronixGroceriesApi" },
+        "AuthorizationType":"COGNITO_USER_POOLS",
+        "AuthorizerId":{ "Ref":"CognitoUserPoolAuthorizer" },
+        "Integration":{
+          "Type":"AWS_PROXY",
+          "IntegrationHttpMethod":"POST",
+          "Uri":{
+            "Fn::Sub":"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PlaceOrderLambdaFunctionArn}/invocations"
+          }
+        },
+        "MethodResponses":[{
+          "StatusCode":"200",
+          "ResponseParameters": { 
+            "method.response.header.Access-Control-Allow-Origin": true 
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionPlaceOrder": {
+      "Type":"AWS::Lambda::Permission",
+      "Properties":{
+        "FunctionName":{ "Ref":"PlaceOrderLambdaFunctionArn" },
+        "Action":"lambda:InvokeFunction",
+        "Principal":"apigateway.amazonaws.com",
+        "SourceArn":{ 
+          "Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/POST/order" 
+        }
+      }
+    },
+
+    "UsersResource": {
+      "Type":"AWS::ApiGateway::Resource",
+      "Properties":{
+        "ParentId":{ "Fn::GetAtt":["OronixGroceriesApi","RootResourceId"] },
+        "PathPart":"users",
+        "RestApiId":{ "Ref":"OronixGroceriesApi" }
+      }
+    },
+    "UsersOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "UsersResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses":[{ "StatusCode":"200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+              "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'", 
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            },
+            "ResponseTemplates": { "application/json":"{}" }
+          }]
+        },
+        "MethodResponses":[{ 
+          "StatusCode":"200",
+          "ResponseParameters":{
+            "method.response.header.Access-Control-Allow-Headers":true,
+            "method.response.header.Access-Control-Allow-Methods":true,
+            "method.response.header.Access-Control-Allow-Origin":true
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "UsersGetMethod": {
+      "Type":"AWS::ApiGateway::Method",
+      "Properties":{
+        "HttpMethod":"GET",
+        "ResourceId":{ "Ref":"UsersResource" },
+        "RestApiId":{ "Ref":"OronixGroceriesApi" },
+        "AuthorizationType":"COGNITO_USER_POOLS",
+        "AuthorizerId":{ "Ref":"CognitoUserPoolAuthorizer" },
+        "Integration":{
+          "Type":"AWS_PROXY",
+          "IntegrationHttpMethod":"POST",
+          "Uri":{ 
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckUserRoleLambdaFunctionArn}/invocations" 
+          }
+        },
+        "MethodResponses":[{
+          "StatusCode":"200",
+          "ResponseParameters": { 
+            "method.response.header.Access-Control-Allow-Origin": true 
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionCheckUserRole": {
+      "Type":"AWS::Lambda::Permission",
+      "Properties":{
+        "FunctionName":{ "Ref":"CheckUserRoleLambdaFunctionArn" },
+        "Action":"lambda:InvokeFunction",
+        "Principal":"apigateway.amazonaws.com",
+        "SourceArn":{ 
+          "Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/GET/users" 
+        }
+      }
+    },
+    
+    "AdminResource": {
+      "Type":"AWS::ApiGateway::Resource",
+      "Properties":{
+        "ParentId":{ "Fn::GetAtt":["OronixGroceriesApi","RootResourceId"] },
+        "PathPart":"admin",
+        "RestApiId":{ "Ref":"OronixGroceriesApi" }
+      }
+    },
+    "AdminOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "AdminResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" }, 
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'", 
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              },
+              "ResponseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true
+            },
+            "ResponseModels": {
+              "application/json": "Empty"
+            }
+          }
+        ]
+      }
+    },
+
+    "AdminAddItemResource": {
+      "Type":"AWS::ApiGateway::Resource",
+      "Properties":{
+        "ParentId":{ "Ref":"AdminResource" },
+        "PathPart":"add-item",
+        "RestApiId":{ "Ref":"OronixGroceriesApi" }
+      }
+    },
+    "AdminAddItemOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "AdminAddItemResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" }, 
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'", 
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              },
+              "ResponseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true
+            },
+            "ResponseModels": {
+              "application/json": "Empty"
+            }
+          }
+        ]
+      }
+    },
+    "AdminAddItemPostMethod": {
+      "Type":"AWS::ApiGateway::Method",
+      "Properties":{
+        "HttpMethod":"POST",
+        "ResourceId":{ "Ref":"AdminAddItemResource" },
+        "RestApiId":{ "Ref":"OronixGroceriesApi" },
+        "AuthorizationType":"COGNITO_USER_POOLS",
+        "AuthorizerId":{ "Ref":"CognitoUserPoolAuthorizer" },
+        "Integration":{
+          "Type":"AWS_PROXY",
+          "IntegrationHttpMethod":"POST",
+          "Uri":{ 
+            "Fn::Sub":"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AddItemToInventoryLambdaFunctionArn}/invocations" 
+          }
+        },
+        "MethodResponses":[{
+          "StatusCode":"200",
+          "ResponseParameters": { 
+            "method.response.header.Access-Control-Allow-Origin": true 
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionAddItemToInventory": {
+      "Type":"AWS::Lambda::Permission",
+      "Properties":{
+        "FunctionName":{ "Ref":"AddItemToInventoryLambdaFunctionArn" },
+        "Action":"lambda:InvokeFunction",
+        "Principal":"apigateway.amazonaws.com",
+        "SourceArn":{ 
+          "Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/POST/admin/add-item" 
+        }
+      }
+    },
+
+    "AdminRemoveItemResource": {
+      "Type":"AWS::ApiGateway::Resource",
+      "Properties":{
+        "ParentId":{ "Ref":"AdminResource" },
+        "PathPart":"remove-item",
+        "RestApiId":{ "Ref":"OronixGroceriesApi" }
+      }
+    },
+    "AdminRemoveItemOptionsMethod": { 
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "OPTIONS",
+        "ResourceId": { "Ref": "AdminRemoveItemResource" }, 
+        "RestApiId": { "Ref": "OronixGroceriesApi" }, 
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{\"statusCode\": 200}" },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'DELETE,OPTIONS'", 
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              },
+              "ResponseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true
+            },
+            "ResponseModels": {
+              "application/json": "Empty"
+            }
+          }
+        ]
+      }
+    },
+    "AdminRemoveItemDeleteMethod": {
+      "Type":"AWS::ApiGateway::Method",
+      "Properties":{
+        "HttpMethod":"DELETE",
+        "ResourceId":{ "Ref":"AdminRemoveItemResource" },
+        "RestApiId":{ "Ref":"OronixGroceriesApi" },
+        "AuthorizationType":"COGNITO_USER_POOLS",
+        "AuthorizerId":{ "Ref":"CognitoUserPoolAuthorizer" },
+        "Integration":{
+          "Type":"AWS_PROXY",
+          "IntegrationHttpMethod":"POST",
+          "Uri":{ 
+            "Fn::Sub":"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteFromInventoryLambdaFunctionArn}/invocations" 
+          }
+        },
+        "MethodResponses":[{
+          "StatusCode":"200",
+          "ResponseParameters": { 
+            "method.response.header.Access-Control-Allow-Origin": true 
+          },
+          "ResponseModels": {
+            "application/json": "Empty"
+          }
+        }]
+      }
+    },
+    "LambdaPermissionDeleteFromInventory": {
+      "Type":"AWS::Lambda::Permission",
+      "Properties":{
+        "FunctionName":{ "Ref":"DeleteFromInventoryLambdaFunctionArn" },
+        "Action":"lambda:InvokeFunction",
+        "Principal":"apigateway.amazonaws.com",
+        "SourceArn":{ 
+          "Fn::Sub":"arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${OronixGroceriesApi}/*/DELETE/admin/remove-item" 
+        }
+      }
+    },
+
+    "ApiDeployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "DependsOn": [
+        "ItemsOptionsMethod",
+        "ItemsGetMethod",
+        "ItemsItemOptionsMethod",
+        "ItemsItemGetMethod",
+        "CategoriesOptionsMethod",
+        "CategoriesGetMethod",
+        "ColorsOptionsMethod",
+        "ColorsGetMethod",
+        "CartOptionsMethod",
+        "CartGetMethod",
+        "CartAddOptionsMethod",
+        "CartAddPostMethod",
+        "CartUpdateOptionsMethod",
+        "CartUpdatePutMethod",
+        "CartRemoveOptionsMethod",
+        "CartRemoveDeleteMethod",
+        "OrderOptionsMethod",
+        "OrderPostMethod",
+        "UsersOptionsMethod",
+        "UsersGetMethod",
+        "AdminOptionsMethod",
+        "AdminAddItemOptionsMethod",
+        "AdminAddItemPostMethod",
+        "AdminRemoveItemOptionsMethod",
+        "AdminRemoveItemDeleteMethod"
+      ],
+      "Properties": {
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "Description": { "Fn::Sub": "Deployment of Oronix Groceries API" }
+      }
+    },
+    "ApiStage": {
+      "Type": "AWS::ApiGateway::Stage",
+      "Properties": {
+        "RestApiId": { "Ref": "OronixGroceriesApi" },
+        "DeploymentId": { "Ref": "ApiDeployment" },
+        "StageName": { "Ref": "ApiStageName" },
+        "MethodSettings": [{
+          "ResourcePath": "/*",
+          "HttpMethod": "*",
+          "CachingEnabled": false
+        }]
+      }
+    }
   },
   "Outputs": {
+    "ApiId": {
+      "Description": "API Gateway ID",
+      "Value": { "Ref": "OronixGroceriesApi" }
+    }
   }
 }

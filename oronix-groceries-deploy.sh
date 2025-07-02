@@ -142,7 +142,7 @@ if aws cloudformation create-stack \
                     ParameterKey=LambdaFunctionsTemplateURL,ParameterValue="$TEMPLATE_BASE_URL/$LAMBDA_FUNCTIONS_TEMPLATE_NAME" \
                     ParameterKey=LambdaCodeS3Key,ParameterValue="$LAMBDA_ZIP_NAME" \
                     ParameterKey=ApiTemplateURL,ParameterValue="$TEMPLATE_BASE_URL/$API_TEMPLATE_NAME" \
-                    ParameterKey=StageName,ParameterValue="$STAGE_NAME" \
+                    ParameterKey=ApiStageName,ParameterValue="$STAGE_NAME" \
                     ParameterKey=DynamoDBTablesTemplateURL,ParameterValue="$TEMPLATE_BASE_URL/$DYNAMODB_TEMPLATE_NAME" \
                     ParameterKey=LabRoleArn,ParameterValue="$LAB_ROLE_ARN" \
     --capabilities CAPABILITY_NAMED_IAM; then
