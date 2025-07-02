@@ -19,6 +19,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load configuration first, then enforce authentication and initialize the product page
     await waitForConfig();
 
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        sessionStorage.clear();
+        window.location.href = window.config.app.homePageUrl;
+      });
+    }
+    
     try {
         // Ensure user is authenticated and token is valid before any further actions
         ensureAuthenticated(window.config.cognito.loginUrl);
@@ -42,7 +51,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const description = item.description || "No description available.";
 
         container.innerHTML = `
-            <img src="images/items/${imageName}.png" alt="${name}" class="w-80 h-80 object-contain mb-6 rounded-lg shadow-lg" />
+            <img 
+              src="images/items/${imageName}.png" 
+              alt="${name}" 
+              class="w-80 h-80 object-contain mb-6 rounded-lg shadow-lg"
+              onerror="this.onerror=null; this.src='images/items/logo.png';""
+            />
             <h1 class="text-2xl font-bold text-gray-800 mb-2">${name}</h1>
             <p class="text-xl text-gray-500 mb-1"><span class="font-medium">${category}</span></p>
             <p class="text-lg font-semibold text-blue-700 mb-4">₪${price}</p>
@@ -53,10 +67,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
 
         // Buttons logic 
-        document.getElementById('add-btn').addEventListener('click', () => {
+/*         document.getElementById('add-btn').addEventListener('click', () => {
             addToCart(item, 1);
         });
-
+ */
+        document.getElementById('add-btn').addEventListener('click', async () => {
+          const success = await addToCart(item, 1);
+          if (success) {
+              alert('Item added to cart successfully!');
+          } else {
+              alert('Failed to add item to cart. Please try again.');
+          }
+      });
     } catch (error) {
         container.innerHTML = `<p class="text-red-500">Error loading product details.</p>`;
         console.error(err);
