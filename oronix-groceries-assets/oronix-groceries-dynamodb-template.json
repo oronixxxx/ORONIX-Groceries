@@ -45,7 +45,7 @@
           { "AttributeName": "categoryId", "AttributeType": "N" }
         ],
         "KeySchema": [
-          { "AttributeName": "categoryId", "KeyType": "RANGE" }
+          { "AttributeName": "categoryId", "KeyType": "HASH" }
         ]
       }
     },
@@ -58,7 +58,7 @@
           { "AttributeName": "colorId", "AttributeType": "N" }
         ],
         "KeySchema": [
-          { "AttributeName": "colorId", "KeyType": "RANGE" }
+          { "AttributeName": "colorId", "KeyType": "HASH" }
         ]
       }
     },
@@ -71,7 +71,7 @@
           { "AttributeName": "id", "AttributeType": "N" }
         ],
         "KeySchema": [
-          { "AttributeName": "id", "KeyType": "RANGE" }
+          { "AttributeName": "id", "KeyType": "HASH" }
         ]
       }
     },
