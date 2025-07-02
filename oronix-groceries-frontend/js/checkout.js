@@ -1,6 +1,6 @@
 // checkout.js
 
-import { ensureAuthenticated, getAuthHeaders } from "./auth.js";
+import { ensureAuthenticated, getAuthHeaders} from "./auth.js";
 import { getCartItems, clearCart } from './services/cartService.js';
 import { toCamelCase } from './services/imageService.js'
 
@@ -15,6 +15,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         // Load configuration first, then enforce authentication and initialize the checkout page
         await waitForConfig();
+
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", function (event) {
+                event.preventDefault();
+                sessionStorage.clear();
+                window.location.href = window.config.app.homePageUrl;
+            });
+        }
+        
         // Ensure user is authenticated and token is valid before any further actions
         ensureAuthenticated(window.config.cognito.loginUrl);
 
@@ -53,7 +63,7 @@ async function loadCartItems() {
     }
 
     cartItems.forEach(item => {
-        const itemTotal = item.price * item.quantity;
+        const itemTotal = Number(item.price) * Number(item.quantity);
         total += itemTotal;
         
         // Build image path based on item name (you can adjust this logic as needed)
@@ -64,8 +74,13 @@ async function loadCartItems() {
         container.innerHTML += `
             <div class="flex items-center justify-between border-b pb-3 gap-4">
                 <div class="flex items-center gap-3">
-                    <img src="${imagePath}" alt="${item.name}" class="w-12 h-12 object-contain rounded" />
-                    <span class="text-gray-700"><span class="font-bold">${item.name}</span> x ${item.quantity}</span>
+                    <img 
+                        src="${imagePath}" 
+                        alt="${item.name}" 
+                        class="w-12 h-12 object-contain rounded"
+                        onerror="this.onerror=null; this.src='images/items/logo.png';"
+                    />
+                    <span class="text-gray-700"><span class="font-bold">${item.name}</span> x ${Number(item.quantity)}</span>
                 </div>
                 <span class="font-medium text-blue-600">₪${itemTotal.toFixed(2)}</span>
             </div>
@@ -79,13 +94,10 @@ async function placeOrder() {
     const form = document.getElementById('checkout-form');
     const formData = new FormData(form);
     const order = {
-        fullName: formData.get('fullName'),
-        email: formData.get('email'),
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
         phone: formData.get('phone'),
         address: formData.get('address'),
-        city: formData.get('city'),
-        state: formData.get('state'),
-        zip: formData.get('zip'),
         items: await getCartItems()
     };
 
