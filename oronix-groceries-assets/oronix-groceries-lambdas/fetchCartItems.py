@@ -53,18 +53,20 @@ def lambda_handler(event, context):
 
         items_details = batch_response['Responses'].get(items_table.name, [])
 
-         # Filter to include only desired fields
-        filtered_items = [
-            {
+        # Filter to include only desired fields
+        filtered_items = []
+        for item in items_details:
+            cart_item = next((c for c in cart_items if c['itemId'] == item['id']), {})
+            filtered_items.append({
                 "id": item["id"],
                 "name": item.get("name", ""),
                 "category": item.get("category", ""),
-                "price": item.get("price", 0)
-            }
-            for item in items_details
-        ]
-        
-        return response_with_cors(200, "Cart items fetched successfully", convert_decimals(items_details))
+                "price": item.get("price", 0),
+                "quantity": cart_item.get("quantity", 1)
+            })
+                    
+        return response_with_cors(200, "Cart items fetched successfully", convert_decimals(filtered_items))
+
 
     except Exception as e:
         return response_with_cors(500, "Failed to fetch cart items", str(e))

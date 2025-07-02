@@ -26,6 +26,7 @@ def lambda_handler(event, context):
         # Extract user ID from Cognito token
         user_id = event['requestContext']['authorizer']['claims']['sub']
         body = json.loads(event['body'])
+        order_data = body.get("order", {})
 
         # Retrieve cart items for the user
         response = cart_table.query(
@@ -36,8 +37,14 @@ def lambda_handler(event, context):
         if not cart_items:
             return response_with_cors(400, "Cart is empty. Cannot place order.")
 
-        # Use only item ids
-        item_ids = [int(item['itemId']) for item in convert_decimals(cart_items) if 'itemId' in item]
+        order_items = [
+            {
+                "itemId": int(item["itemId"]),
+                "quantity": int(item.get("quantity", 1))
+            }
+            for item in convert_decimals(cart_items)
+            if "itemId" in item
+        ]
 
         # Scan all orders to find the highest orderId
         orders_response = orders_table.scan()
@@ -46,10 +53,22 @@ def lambda_handler(event, context):
         next_order_id = max(order_ids, default=0) + 1
 
         # Build order item
+        #order = {
+        #    "userId": user_id,
+        #    "orderId": next_order_id,
+        #    "items": item_ids,
+        #    "createdAt": datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
+        #    "status": "PROCESSING"
+        #}
+
         order = {
             "userId": user_id,
             "orderId": next_order_id,
-            "items": item_ids,
+            "firstName": order_data.get("firstName", ""),
+            "lastName": order_data.get("lastName", ""),
+            "phone": order_data.get("phone", ""),
+            "address": order_data.get("address", ""),
+            "items": order_items,
             "createdAt": datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
             "status": "PROCESSING"
         }
