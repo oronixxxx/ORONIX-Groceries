@@ -13,6 +13,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load configuration first, then enforce authentication and initialize the cart page
     await waitForConfig();
     
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            sessionStorage.clear();
+            window.location.href = window.config.app.homePageUrl;
+        });
+    }
+    
     try {
         // Ensure user is authenticated and token is valid before any further actions
         ensureAuthenticated(window.config.cognito.loginUrl);
@@ -44,19 +53,26 @@ function renderCartItems(items) {
         itemElement.className = 'flex items-center justify-between p-4 border-b';
 
         const imageName = toCamelCase(item.name);
-
+        const price = Number(item.price);
+        const quantity = Number(item.quantity)
+        
         itemElement.innerHTML = `
             <div class="flex flex-row items-center justify-between w-70 gap-20">
                 <div class="flex flex-col items-center">
-                    <img src="images/items/${imageName}.png" alt="${item.name}" class="flex justify-center w-32 h-32 object-cover rounded-lg mr-4">
+                    <img 
+                        src="images/items/${imageName}.png" 
+                        alt="${item.name}" 
+                        class="flex justify-center w-20 h-20 object-contain rounded-lg mr-4"
+                        onerror="this.onerror=null; this.src='images/items/logo.png';"
+                    >
                 </div>
                 <div class="flex flex-col items-center w-40 gap-4">
                     <h3 class="text-4xl font-semibold flex items-center">${item.name}</h3>
-                    <p class="text-blue-500 items-center text-xl">₪${(item.price * item.quantity).toFixed(2)}</p>
+                    <p class="text-blue-500 items-center text-xl">₪${(price * quantity).toFixed(2)}</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <input type="number" value="${item.quantity}" min="1" class="quantity-input w-28 h-10 text-center border rounded-lg">
+                <input type="number" value="${quantity}" min="1" class="quantity-input w-28 h-10 text-center border rounded-lg">
                 <button class="remove-btn bg-red-500 text-white ml-10 px-6 py-1 rounded-lg hover:bg-red-600 w-28 h-10">Remove</button>
             </div>
         `;
