@@ -105,9 +105,11 @@
           }
         },
         "MethodResponses":[{ "StatusCode":"200",
-          "ResponseParameters": {
-            "method.response.header.Access-Control-Allow-Origin": true
-          },
+        "ResponseParameters": {
+          "method.response.header.Access-Control-Allow-Headers": true,
+          "method.response.header.Access-Control-Allow-Methods": true,
+          "method.response.header.Access-Control-Allow-Origin": true
+        },
           "ResponseModels": {
             "application/json": "Empty"
           }
@@ -184,6 +186,8 @@
         "MethodResponses": [{
           "StatusCode": "200",
           "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
             "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
@@ -261,8 +265,10 @@
         },
         "MethodResponses":[{
           "StatusCode":"200",
-          "ResponseParameters": { 
-            "method.response.header.Access-Control-Allow-Origin": true 
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
+            "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
             "application/json": "Empty"
@@ -339,8 +345,10 @@
         },
         "MethodResponses":[{
           "StatusCode":"200",
-          "ResponseParameters": { 
-            "method.response.header.Access-Control-Allow-Origin": true 
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
+            "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
             "application/json": "Empty"
@@ -424,8 +432,10 @@
         },
         "MethodResponses":[{
           "StatusCode":"200",
-          "ResponseParameters": { 
-            "method.response.header.Access-Control-Allow-Origin": true 
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
+            "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
             "application/json": "Empty"
@@ -507,8 +517,10 @@
         },
         "MethodResponses":[{
           "StatusCode":"200",
-          "ResponseParameters": { 
-            "method.response.header.Access-Control-Allow-Origin": true 
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
+            "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
             "application/json": "Empty"
@@ -590,8 +602,10 @@
         },
         "MethodResponses":[{
           "StatusCode":"200",
-          "ResponseParameters": { 
-            "method.response.header.Access-Control-Allow-Origin": true 
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
+            "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
             "application/json": "Empty"
@@ -673,8 +687,10 @@
         },
         "MethodResponses":[{
           "StatusCode":"200",
-          "ResponseParameters": { 
-            "method.response.header.Access-Control-Allow-Origin": true 
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
+            "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
             "application/json": "Empty"
@@ -749,8 +765,10 @@
         },
         "MethodResponses":[{
           "StatusCode":"200",
-          "ResponseParameters": { 
-            "method.response.header.Access-Control-Allow-Origin": true 
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
+            "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
             "application/json": "Empty"
@@ -827,8 +845,10 @@
         },
         "MethodResponses":[{
           "StatusCode":"200",
-          "ResponseParameters": { 
-            "method.response.header.Access-Control-Allow-Origin": true 
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
+            "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
             "application/json": "Empty"
@@ -960,8 +980,10 @@
         },
         "MethodResponses":[{
           "StatusCode":"200",
-          "ResponseParameters": { 
-            "method.response.header.Access-Control-Allow-Origin": true 
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
+            "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
             "application/json": "Empty"
@@ -1045,8 +1067,10 @@
         },
         "MethodResponses":[{
           "StatusCode":"200",
-          "ResponseParameters": { 
-            "method.response.header.Access-Control-Allow-Origin": true 
+          "ResponseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": true,
+            "method.response.header.Access-Control-Allow-Methods": true,
+            "method.response.header.Access-Control-Allow-Origin": true
           },
           "ResponseModels": {
             "application/json": "Empty"
