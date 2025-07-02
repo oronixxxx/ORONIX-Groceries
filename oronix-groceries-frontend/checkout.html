@@ -71,13 +71,10 @@
 
                         <form id="checkout-form" class="flex flex-col gap-4">
                             <!-- Input fields for shipping details -->
-                            <input type="text" name="fullName" placeholder="Full Nmae" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                            <input type="email" name="email" placeholder="Email Address" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                            <input type="text" name="phone" placeholder="Phone Number" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                            <input type="text" name="address" placeholder="Address" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                            <input type="text" name="city" placeholder="City" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                            <input type="text" name="state" placeholder="State" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                            <input type="text" name="zip" placeholder="Zip Code" required class="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            <input type="text" name="firstName" placeholder="First Name" required class="border rounded-lg p-2 focus:ring-blue-200">
+                            <input type="text" name="lastName" placeholder="Last Name" required class="border rounded-lg p-2 focus:ring-blue-200">
+                            <input type="text" name="phone" placeholder="Phone Number" required pattern="^05[0-9]{8}$" class="border rounded-lg p-2 focus:ring-blue-200">
+                            <input type="text" name="address" placeholder="Address" required class="border rounded-lg p-2 focus:ring-blue-200">
                             
                             <!-- Submit button -->
                             <button type="submit" class="bg-blue-600 text-white rounded-lg p-2 hover:bg-blue-600 transition duration-200">
