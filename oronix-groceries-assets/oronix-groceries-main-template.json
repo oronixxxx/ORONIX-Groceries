@@ -232,6 +232,42 @@
       "Description": "Nested DynamoDB tables stack name",
       "Value": { "Ref": "DynamoDBTablesStack" }
     },
+    "DynamoDBTableCategoriesName": {
+      "Description": "Name of the Categories table",
+      "Value": {
+        "Fn::GetAtt": [
+          "DynamoDBTablesStack",
+          "Outputs.DynamoDBTableCategoriesName"
+        ]
+      }
+    },
+    "DynamoDBTableColorsName": {
+      "Description": "Name of the Colors table",
+      "Value": {
+        "Fn::GetAtt": [
+          "DynamoDBTablesStack",
+          "Outputs.DynamoDBTableColorsName"
+        ]
+      }
+    },
+    "DynamoDBTableItemsName": {
+      "Description": "Name of the Items table",
+      "Value": {
+        "Fn::GetAtt": [
+          "DynamoDBTablesStack",
+          "Outputs.DynamoDBTableItemsName"
+        ]
+      }
+    },
+    "DynamoDBTableUsersName": {
+      "Description": "Name of the Users table",
+      "Value": {
+        "Fn::GetAtt": [
+          "DynamoDBTablesStack",
+          "Outputs.DynamoDBTableUsersName"
+        ]
+      }
+    },
     "CognitoStackName": {
       "Description": "Nested Cognito stack name",
       "Value": { "Ref": "CognitoStack" }
@@ -260,6 +296,15 @@
         "Fn::GetAtt": [
           "CognitoStack",
           "Outputs.CognitoUserPoolClientId"
+        ]
+      }
+    },
+    "LoadInitialDataLambdaFunctionName": {
+      "Description": "Name of LoadInitialDataToDynamoDB Lambda function",
+      "Value": {
+        "Fn::GetAtt": [
+          "LambdaFunctionsStack",
+          "Outputs.LoadInitialDataLambdaFunctionName"
         ]
       }
     },

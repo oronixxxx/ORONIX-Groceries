@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# oronix-groceries-deploy.sh
+
 set -euo pipefail
 
 # =======================================================================
@@ -13,9 +15,17 @@ echo "📌 Account ID: $ACCOUNT_ID"
 echo "📌 AWS Region: $AWS_REGION"
 
 # Set parameters for CF template creation
-ENV_NAME="-test" # for every resource
-STAGE_NAME="test" # only for the API Stage Name
-echo "📌 Environment name: $ENV_NAME"
+RAW_ENV=""
+# If RAW_ENV is non-empty, prepend “-”, otherwise leave empty
+ENV_NAME=${RAW_ENV:+-$RAW_ENV} # for every resource
+
+if [ -z "$ENV_NAME" ]; then
+  echo "📌 No environment suffix specified; deploying to base environment"
+else
+  echo "📌 Using environment suffix: ENV_NAME='$ENV_NAME'"
+fi
+
+STAGE_NAME="prod" # only for the API Stage Name
 echo "📌 Api Gateway stage name: $AWS_REGION"
 
 PROJECT_NAME="oronix-groceries"
@@ -41,6 +51,12 @@ API_TEMPLATE_NAME="$PROJECT_NAME-api-template.json"
 LAMBDA_FUNCTIONS_TEMPLATE_NAME="$PROJECT_NAME-lambdas-template.json"
 DYNAMODB_TEMPLATE_NAME="$PROJECT_NAME-dynamodb-template.json"
 
+# Data files 
+DATA_DIR_NAME="$PROJECT_NAME-data"
+CATEGORIES_FILE_PATH="$DATA_DIR_NAME/categories.json"
+COLORS_FILE_PATH="$DATA_DIR_NAME/colors.json"
+ITEMS_FILE_PATH="$DATA_DIR_NAME/items.json"
+
 # Website files 
 WEBSITE_DIR_NAME="$PROJECT_NAME-frontend"
 
@@ -51,13 +67,13 @@ LOGOUT_URL="https://${WEBSITE_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/homePa
 # Lab IAM role arn
 LAB_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/LabRole"
 
-# DynamoDB table names
-CART_TABLE="Cart"
-CATEGORIES_TABLE="Categories"
-COLORS_TABLE="Colors"
-ITEMS_TABLE="Items"
-ORDERS_TABLE="Orders"
-USERS_TABLE_NAME="Users"
+# # DynamoDB table names
+# CART_TABLE="Cart"
+# CATEGORIES_TABLE="Categories"
+# COLORS_TABLE="Colors"
+# ITEMS_TABLE="Items"
+# ORDERS_TABLE="Orders"
+# USERS_TABLE_NAME="Users"
 
 # Cognito user group names
 COGNITO_ADMIN_GROUP_NAME="admins"
@@ -65,6 +81,14 @@ COGNITO_USER_GROUP_NAME="users"
 
 # ========================= STARTING DEPLOYMENT =========================
 echo "🚀 Starting Oronix Groeries deployment in $ENV_NAME environment"
+
+
+# → Pause here:
+read -rp "Continue to create the assets s3 bucket? [y/N] " _ANS
+if [[ ! $_ANS =~ ^[Yy] ]]; then
+  echo "Aborting deployment..."
+  exit 1
+fi
 
 # ============================== S3 BUCKET ==============================
 echo "Checking if the buckets were created"
@@ -95,6 +119,8 @@ else
     fi
 fi
 
+
+# ============================== UPLOAD ASSETS FILES ============================== 
 # Upload assets file to assets bucket
 echo "⤴️ Uploading assets files to -> '$ASSETS_BUCKET_NAME'..."
 ASSETS_FILES=(
@@ -105,6 +131,9 @@ ASSETS_FILES=(
     "$API_TEMPLATE_NAME"
     "$LAMBDA_FUNCTIONS_TEMPLATE_NAME"
     "$DYNAMODB_TEMPLATE_NAME"
+    "$CATEGORIES_FILE_PATH"
+    "$COLORS_FILE_PATH"
+    "$ITEMS_FILE_PATH"
 )
 
 for FILE in "${ASSETS_FILES[@]}"; do
@@ -123,6 +152,33 @@ for FILE in "${ASSETS_FILES[@]}"; do
         exit 1
     fi
 done
+
+
+# # ==================== UPLOAD INITIAL DATA JSON ====================
+# echo "⤴️ Uploading initial data JSON files to -> '$ASSETS_BUCKET_NAME/oronix-groceries-data'…"
+
+# # local folder inside oronix-groceries-assets
+# DATA_DIR_NAME="oronix-groceries-data"
+# LOCAL_DATA_DIR="oronix-groceries-assets/${DATA_DIR_NAME}"
+
+# for fname in categories.json colors.json items.json; do
+#   LOCAL_PATH="${LOCAL_DATA_DIR}/${fname}"
+#   S3_KEY="${DATA_DIR_NAME}/${fname}"
+#   echo "📤 Uploading $LOCAL_PATH → s3://$ASSETS_BUCKET_NAME/$S3_KEY"
+#   if ! aws s3 cp "$LOCAL_PATH" "s3://$ASSETS_BUCKET_NAME/$S3_KEY"; then
+#     echo "❌ Failed to upload $fname"
+#     exit 1
+#   fi
+# done
+
+
+# → Pause here:
+read -rp "Continue to deploy the main CloudFormation stack? [y/N] " _ANS
+if [[ ! $_ANS =~ ^[Yy] ]]; then
+  echo "Aborting deployment..."
+  exit 1
+fi
+
 
 # =========================== CLOUD FORMATION ===========================
 echo "🚀 Deploying main CloudFormation stack..."
@@ -154,7 +210,80 @@ else
     exit 1
 fi
 
-# =========================== WEBSITE SETUP ===========================
+
+# =========================== BUILD THE DATA PAYLOAD FILE ===========================
+# Fetch table names from CF outputs:
+LOAD_DATA_FUNCTION_NAME=$(aws cloudformation describe-stacks \
+  --stack-name "${STACK_NAME}" \
+  --query "Stacks[0].Outputs[?OutputKey=='LoadInitialDataLambdaFunctionName'].OutputValue" \
+  --output text)
+
+echo "✅ LoadInitialData function: ${LOAD_DATA_FUNCTION_NAME}"
+
+CATEGORIES_TABLE=$(aws cloudformation describe-stacks \
+  --stack-name "$STACK_NAME" \
+  --query "Stacks[0].Outputs[?OutputKey=='DynamoDBTableCategoriesName'].OutputValue" \
+  --output text)
+
+COLORS_TABLE=$(aws cloudformation describe-stacks \
+  --stack-name "$STACK_NAME" \
+  --query "Stacks[0].Outputs[?OutputKey=='DynamoDBTableColorsName'].OutputValue" \
+  --output text)
+
+ITEMS_TABLE=$(aws cloudformation describe-stacks \
+  --stack-name "$STACK_NAME" \
+  --query "Stacks[0].Outputs[?OutputKey=='DynamoDBTableItemsName'].OutputValue" \
+  --output text)
+
+# Build the payload JSON:
+DATA_PAYLOAD_PATH="scripts/initial_data_payload.json"
+cat > "$DATA_PAYLOAD_PATH" <<EOF
+{
+  "tables": [
+    { "table": "$CATEGORIES_TABLE", "key": "${CATEGORIES_FILE_PATH}" },
+    { "table": "$COLORS_TABLE",     "key": "${COLORS_FILE_PATH}"     },
+    { "table": "$ITEMS_TABLE",      "key": "${ITEMS_FILE_PATH}"      }
+  ]
+}
+EOF
+
+echo "✔ Generated $DATA_PAYLOAD_PATH with:"
+jq . $DATA_PAYLOAD_PATH  || cat $DATA_PAYLOAD_PATH
+
+
+# → Pause here:
+read -rp "Continue to lode initial data to DynamoDB via Lambda? [y/N] " _ANS
+if [[ ! $_ANS =~ ^[Yy] ]]; then
+  echo "Aborting DYNAMODB INITIAL DATA SETUP..."
+  exit 1
+fi
+
+
+# =========================== DYNAMODB INITIAL DATA SETUP ===========================
+echo "→ loding initial data to DynamoDB via Lambda…"
+
+# Make sure the payload file actually exists
+if [ ! -f "$DATA_PAYLOAD_PATH" ]; then
+  echo "❌ Payload file not found at $DATA_PAYLOAD_PATH"
+  echo "   Did the previous step generate it correctly?"
+  exit 1
+fi
+
+# Ensure the invoke script is executable
+chmod +x scripts/invoke_load_initial_data.sh
+
+# Run it and bail on failure
+./scripts/invoke_load_initial_data.sh "${LOAD_DATA_FUNCTION_NAME}"
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "❌ Initial data seeding failed!"
+  exit $RESULT
+else
+  echo "✅ Initial data seeded successfully!"
+fi
+
+
+# =========================== CHECK IF WEBSITE BUCKET EXISTS  ===========================
 # Look for website bucket after stack creation
 echo "🔍 looking for website bucket -> '$WEBSITE_BUCKET_NAME'..."
 if aws s3api head-bucket --bucket "$WEBSITE_BUCKET_NAME" >/dev/null 2>&1; then
@@ -163,31 +292,29 @@ else
     echo "❌ Website bucket '$WEBSITE_BUCKET_NAME' not found after stack creation"
 fi
 
-# ====== Build the website's config.json file ======
-# Get stack outputs
 
-# Output: CognitoUserPoolId
+# =========================== BUILD THE CONFIG FILE ===========================
+# Build the website's config.json file
+
+# Get stack outputs:
 USER_POOL_ID=$(aws cloudformation describe-stacks \
   --stack-name "$STACK_NAME" \
   --query "Stacks[0].Outputs[?OutputKey=='CognitoUserPoolId'].OutputValue" \
   --output text)
 echo "📌 User Pool ID: $USER_POOL_ID"
 
-# Output: CognitoUserPoolDomainPrefix
 USER_POOL_DOMAIN_PREFIX=$(aws cloudformation describe-stacks \
   --stack-name "$STACK_NAME" \
   --query "Stacks[0].Outputs[?OutputKey=='CognitoUserPoolDomainPrefix'].OutputValue" \
   --output text)
 echo "📌 User Pool Domain Prefix: $USER_POOL_DOMAIN_PREFIX"
 
-# Output: CognitoUserPoolClientId
 USER_POOL_CLIENT_ID=$(aws cloudformation describe-stacks \
   --stack-name "$STACK_NAME" \
   --query "Stacks[0].Outputs[?OutputKey=='CognitoUserPoolClientId'].OutputValue" \
   --output text)
 echo "📌 User Pool Client Id: $USER_POOL_CLIENT_ID"
 
-# Output: ApiId
 API_ID=$(aws cloudformation describe-stacks \
   --stack-name "$STACK_NAME" \
   --query "Stacks[0].Outputs[?OutputKey=='ApiId'].OutputValue" \
@@ -248,7 +375,8 @@ EOF
 
 echo "✅ Created config.json at $CONFIG_JSON_PATH (locally)"
 
-# Upload website files
+
+# =========================== UPLOAD WEBSITE FILES ===========================
 echo "⤴️ Uploading website files to -> bucket '$WEBSITE_BUCKET_NAME'..."
 
 if aws s3 cp "$WEBSITE_DIR_NAME" "s3://$WEBSITE_BUCKET_NAME/" --recursive; then
@@ -261,16 +389,27 @@ fi
 
 echo "Oronix Groceries deployed successfully (environment: '$ENV_NAME')."
 
-# Creating Test Users
+
+# → Pause here:
+read -rp "Continue to create test users? [y/N] " _ANS
+if [[ ! $_ANS =~ ^[Yy] ]]; then
+  echo "Aborting..."
+  exit 1
+fi
+
+# =========================== CREATING TEST USERS ===========================
 echo "👤 Creating admin user..."
 
 aws cognito-idp admin-create-user \
   --region "$AWS_REGION" \
   --user-pool-id "$USER_POOL_ID" \
   --username "admin@example.com" \
-  --user-attributes Name="email",Value="admin@example.com" Name="email_verified",Value="true" Name="name",Value="Admin User" \
+  --user-attributes \
+    Name="email",Value="admin@example.com" \
+    Name="email_verified",Value="true" \
+    Name="given_name",Value="Admin" \
+    Name="family_name",Value="User" \
   --message-action SUPPRESS
-
 
 aws cognito-idp admin-set-user-password \
   --region "$AWS_REGION" \
@@ -283,7 +422,7 @@ aws cognito-idp admin-add-user-to-group \
   --region "$AWS_REGION" \
   --user-pool-id "$USER_POOL_ID" \
   --username "admin@example.com" \
-  --group-name "$ADMIN_GROUP_NAME"
+  --group-name "$COGNITO_ADMIN_GROUP_NAME"
 
 echo "✅ Admin user created."
 echo ""
@@ -293,7 +432,11 @@ aws cognito-idp admin-create-user \
   --region "$AWS_REGION" \
   --user-pool-id "$USER_POOL_ID" \
   --username "user@example.com" \
-  --user-attributes Name="email",Value="user@example.com" Name="email_verified",Value="true" Name="name",Value="Regular User" \
+  --user-attributes \
+    Name="email",Value="user@example.com" \
+    Name="email_verified",Value="true" \
+    Name="given_name",Value="Regular" \
+    Name="family_name",Value="User" \
   --message-action SUPPRESS
 
 aws cognito-idp admin-set-user-password \
@@ -307,10 +450,47 @@ aws cognito-idp admin-add-user-to-group \
   --region "$AWS_REGION" \
   --user-pool-id "$USER_POOL_ID" \
   --username "user@example.com" \
-  --group-name "$USER_GROUP_NAME"
+  --group-name "$COGNITO_USER_GROUP_NAME"
 
 echo "✅ Test user created."
+echo ""
+echo "→ Seeding Test user record into DynamoDB Users table…"
 
+# 1) Pull the Users table name from CF outputs
+USERS_TABLE=$(aws cloudformation describe-stacks \
+  --stack-name "$STACK_NAME" \
+  --query "Stacks[0].Outputs[?OutputKey=='DynamoDBTableUsersName'].OutputValue" \
+  --output text)
+
+echo "   • Users table: $USERS_TABLE"
+
+# 2) Get the Cognito sub (userId) of the test user
+TEST_USERNAME="user@example.com"
+USER_SUB=$(aws cognito-idp admin-get-user \
+  --user-pool-id "$USER_POOL_ID" \
+  --username "$TEST_USERNAME" \
+  --query "UserAttributes[?Name=='sub'].Value" \
+  --output text)
+
+echo "   • Test user sub: $USER_SUB"
+
+# 3) Prepare timestamp
+CREATED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+echo "   • createdAt: $CREATED_AT"
+
+# 4) Put the item into DynamoDB with the same schema as your Python code
+aws dynamodb put-item \
+  --table-name "$USERS_TABLE" \
+  --item "{
+    \"userId\":    {\"S\": \"$USER_SUB\"},
+    \"email\":     {\"S\": \"$TEST_USERNAME\"},
+    \"firstName\": {\"S\": \"Regular\"},
+    \"lastName\":  {\"S\": \"User\"},
+    \"createdAt\": {\"S\": \"$CREATED_AT\"}
+  }"
+
+echo "✔ Test user record inserted into DynamoDB"
+echo ""
 echo ""
 echo "🎉 Setup complete!"
 echo "🌐 Check out the Oronix-Groceries website:"
@@ -322,11 +502,17 @@ echo "------------------------------"
 echo "👤 Admin User:"
 echo "📧 Email: admin@example.com"
 echo "🔑 Password: AdminPassword123!"
-echo "📌 Group: $ADMIN_GROUP_NAME"
+echo "📌 Group: $COGNITO_ADMIN_GROUP_NAME"
 echo "------------------------------"
 echo "👤 Test User:"
 echo "📧 Email: user@example.com"
 echo "🔑 Password: UserPassword123!"
-echo "📌 Group: $USER_GROUP_NAME"
+echo "📌 Group: $COGNITO_USER_GROUP_NAME"
 echo "------------------------------"
 
+
+
+# oronix-groceries-deploy.sh
+
+# chmod +x oronix-groceries-deploy.sh
+# ./oronix-groceries-deploy.sh

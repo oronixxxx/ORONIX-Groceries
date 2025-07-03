@@ -56,6 +56,26 @@
     }
   },
   "Resources": {
+    "LoadInitialDataToDynamoDBLambdaFunction" : {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Fn::Sub": "LoadInitialDataToDynamoDB${EnvName}" },
+        "Handler": "LoadInitialDataToDynamoDB.lambda_handler",
+        "Role": { "Ref": "LabRoleArn" },
+        "Runtime": "python3.13",
+        "Code": { 
+          "S3Bucket": { "Ref": "AssetsBucketName" },
+          "S3Key": { "Ref": "LambdaCodeS3Key" } 
+        },
+        "Environment": { 
+          "Variables": { 
+            "ASSETS_BUCKET_NAME": { "Ref": "AssetsBucketName" } 
+          } 
+        },
+        "MemorySize": 128,
+        "Timeout": 10
+      }
+    },
     "CheckUserRoleLambdaFunction" : {
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -300,6 +320,10 @@
     }
   },
   "Outputs": {
+    "LoadInitialDataLambdaFunctionName": {
+      "Description": "Name of LoadInitialDataToDynamoDB Lambda function",
+      "Value": { "Ref": "LoadInitialDataToDynamoDBLambdaFunction" }
+    },
     "CheckUserRoleLambdaFunctionArn": { 
       "Description":"ARN of CheckUserRoleLambdaFunction", 
       "Value": { "Fn::GetAtt": ["CheckUserRoleLambdaFunction","Arn"] } 
