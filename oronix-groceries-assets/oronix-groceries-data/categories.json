@@ -1,0 +1,50 @@
+[
+  {
+    "categoryId":1,
+    "categoryName":"Fruits"
+  },
+  {
+    "categoryId":2,
+    "categoryName":"Vegetables"
+  },
+  {
+    "categoryId":3,
+    "categoryName":"Dairy"
+  },
+  {
+    "categoryId":4,
+    "categoryName":"Breads"
+  },
+  {
+    "categoryId":5,
+    "categoryName":"Meats"
+  },
+  {
+    "categoryId":6,
+    "categoryName":"Pantry Items"
+  },
+  {
+    "categoryId":7,
+    "categoryName":"Snacks"
+  },
+  {
+    "categoryId":8,
+    "categoryName":"Drinks"
+  },
+  {
+    "categoryId":9,
+    "categoryName":"Household and cleaning"
+  },
+  {
+    "categoryId":10,
+    "categoryName":"Personal care"
+  },
+  {
+    "categoryId":11,
+    "categoryName":"Pet care"
+  },
+  {
+    "categoryId":12,
+    "categoryName":" Baby care"
+  }
+]
