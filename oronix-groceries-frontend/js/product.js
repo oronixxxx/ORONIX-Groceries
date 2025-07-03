@@ -90,10 +90,11 @@ async function fetchItemDetails(itemId) {
   
   console.log("Fetching Item Details from the database.");
   const fetchItemDetailsAPI = `${window.config.api.fetchItemDetails}?id=${encodeURIComponent(itemId)}`;
-  const headers = {
-    "Content-Type": "application/json",
-    "Authorization": sessionStorage.getItem("tokenId")
-  };
+  const headers = getAuthHeaders();
+  // const headers = {
+  //   "Content-Type": "application/json",
+  //   "Authorization": sessionStorage.getItem("tokenId")
+  // };
 
   try {
     const response = await fetch(fetchItemDetailsAPI, {

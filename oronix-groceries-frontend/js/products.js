@@ -248,11 +248,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function fetchAllCategories() {
   const fetchAllCategoriesAPI = window.config.api.fetchAllCategories;
-
-  const headers = {
-    "Content-Type": "application/json",
-    "Authorization": sessionStorage.getItem("tokenId")
-  };
+  const headers = getAuthHeaders();
+  // const headers = {
+  //   "Content-Type": "application/json",
+  //   "Authorization": sessionStorage.getItem("tokenId")
+  // };
 
   console.log(headers);
   console.log("Fetching Categories from the database.");
@@ -280,11 +280,11 @@ async function fetchAllCategories() {
 
 async function fetchAllItems() {
   const fetchAllItemsAPI = window.config.api.fetchAllItems;
-  
-  const headers = {
-    "Content-Type": "application/json",
-    "Authorization": sessionStorage.getItem("tokenId")
-  };
+  const headers = getAuthHeaders();
+  // const headers = {
+  //   "Content-Type": "application/json",
+  //   "Authorization": sessionStorage.getItem("tokenId")
+  // };
   
   console.log(headers);
   console.log("Fetching All Items from the database.");
