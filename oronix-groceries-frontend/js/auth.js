@@ -66,8 +66,35 @@ export function ensureAuthenticated(loginUrl) {
   // Attempt to extract tokens if not already stored
   extractAndStoreTokens();
 
-  // If token is missing or expired, redirect to login
+  // Default value
+  const defaultUrl = "homePage.html";
+
+  // Check if 'loginUrl' exists and is not empty (even after trimming spaces)
+  // Otherwise — fall back to 'defaultUrl'
+  const redirectUrl =
+    (typeof loginUrl === "string" && loginUrl.trim().length > 0 ? loginUrl : defaultUrl);
+
+  // If token is missing or expired, redirect to redirectUrl
   if (!getIdToken() || isTokenExpired()) {
-    window.location.href = loginUrl;
+    window.location.href = redirectUrl;
+  }
+}
+
+// Checks if the user is logged in — then redirects to the given URL.
+// Otherwise — no redirect is performed.
+export function redirectIfAuthenticated(redirectTo) {
+  // Attempt to extract tokens if not already stored
+  extractAndStoreTokens();
+
+  // Default value
+  const defaultUrl = "index.html";
+  
+  // Check if 'redirectTo' exists and is not empty (even after trimming spaces)
+  // Otherwise — fall back to 'defaultUrl'
+  const redirectUrl =
+    (typeof redirectTo === "string" && redirectTo.trim().length > 0 ? redirectTo : defaultUrl);
+
+  if (getIdToken() && !isTokenExpired()) {
+    window.location.href = redirectUrl;
   }
 }
