@@ -73,7 +73,7 @@
         <!-- Scripts -->
         <script src="js/config.js"></script>
         <script type="module">
-            import { ensureAuthenticated } from './js/auth.js';
+            import { ensureAuthenticated, redirectIfAuthenticated } from './js/auth.js';
             
             // Helper: wait for config to be available before proceeding
             function waitForConfig() {
@@ -89,10 +89,13 @@
                 // Destructure the needed URLs from global config
                 const { cognito, app } = window.config;
                 
-                // Ensure user is authenticated and token is valid before any further actions
-                ensureAuthenticated(cognito.loginUrl);
+                // // If the user is not authenticated -> redirect to Cognito Hosted Login UI
+                // ensureAuthenticated();
+
+                // Check if the user is authenticated -> redirect to index.html
+                redirectIfAuthenticated();
                 
-                // Handle click on "Log in" button -> redirect to Cognito Hosted UI
+                // Handle click on "Log in" button -> redirect to Cognito Hosted Login UI
                 document.getElementById("loginBtn").addEventListener("click", event => {
                     event.preventDefault();
                     window.location.href = cognito.loginUrl;
