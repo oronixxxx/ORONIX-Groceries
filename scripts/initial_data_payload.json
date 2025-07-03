@@ -1,0 +1,7 @@
+{
+ "tables": [
+   { "table": "Categories", "key": "oronix-groceries-data/categories.json" },
+   { "table": "Colors",     "key": "oronix-groceries-data/colors.json"     },
+   { "table": "Items",      "key": "oronix-groceries-data/items.json"      }
+ ]
+}
